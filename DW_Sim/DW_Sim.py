@@ -41,6 +41,26 @@ print("[系統]: 執行輸入文本檢查")
 channel_amount, tile_w = channel_check()
 
 
+# ======== Hex to Dec ========
+def HexToDec(hex_input):
+    dec_output = []
+    for i in range(len(hex_input)):
+        raw_val = int(hex_input[i], 16)
+        if raw_val & 0x8000:#判斷第 15 bit (MSB) 是否為 1
+            dec_output.append(raw_val - 0x10000)
+        else:
+            dec_output.append(raw_val)
+    return dec_output
+
+# ======== Dec to Hec ========
+def DecToHec(dec_input):
+    hex_output = []
+    for i in range(len(dec_input)):
+        hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
+
+    return hex_output
+
+
 # ======== 讀取檔案 -- 運算用 ========
 # ==== tile ====
 def read_tile(tile_path, tile):
@@ -50,8 +70,7 @@ def read_tile(tile_path, tile):
 
         # str 轉 int(16進制)
         tile_int = []
-        for i in tile_str:
-            tile_int.append(int(i, 16))
+        tile_int = HexToDec(tile_str)
         
         # 將 tile 的 channel 切開並存為 2 維 list
         for i in range(0, channel_amount, 1):
@@ -60,49 +79,54 @@ def read_tile(tile_path, tile):
 tile0 = []
 tile1 = []
 tile2 = []
-print("\n[系統]: 讀取tile_buffer1.txt")
+print("\n\n====================")
+print("[系統]: 讀取tile_buffer1.txt")
 read_tile("tile_buffer1.txt", tile0)
 print("[系統]: 讀取tile_buffer2.txt")
 read_tile("tile_buffer2.txt", tile1)
 print("[系統]: 讀取tile_buffer3.txt")
 read_tile("tile_buffer3.txt", tile2)
 
-print("[系統]: 以下為各 tile_buffer 輸出，供檢查")
+print("[系統]: 以下為各 tile_buffer，供檢查")
 # 印出 tile0 確認
 print("\ntile_buffer1:")
 for i in range(0, channel_amount, 1):
-    print(len(tile0[i]), tile0[i])
+    print("W =", len(tile0[i]), f"tile1_{i}: ", tile0[i])
 # 印出 tile1 確認
 print("\ntile_buffer2:")
 for i in range(0, channel_amount, 1):
-    print(len(tile0[i]), tile0[i])
+    print("W =", len(tile1[i]), f"tile2_{i}: ", tile1[i])
 # 印出 tile2 確認
 print("\ntile_buffer3:")
 for i in range(0, channel_amount, 1):
-    print(len(tile0[i]), tile0[i])
+    print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
 
 
 # ==== weight ====
 def read_weight(weight_path, weight):
     with open(weight_path, "r", encoding = "utf-8") as f:
         # 讀取 txt 成 list
-        weight_str = f.read().split()
+        weight_str_a = f.read().split()
 
-        # str 轉 int(16進制)
-        weight_int = []
-
-        for i in range(0, len(weight_str), 1):
+        #將bias的兩個字串合併以及跳過再存回
+        weight_str_b = []
+        for i in range(0, len(weight_str_a), 1):
             if(i == 1 or i == 2 or i == 3 or i == 7 or i == 11 or i== 15):
                 continue
             elif(i == 0):
-                weight_int.append(int(weight_str[0]+weight_str[1], 16))
+                weight_str_b.append(weight_str_a[0]+weight_str_a[1])
             else:
-                weight_int.append(int(weight_str[i], 16))
+                weight_str_b.append(weight_str_a[i])
+
+        # str 轉 int(16進制)
+        weight_int = []
+        weight_int = HexToDec(weight_str_b)
         
         weight.append(weight_int)
 
 weight = []
-print("\n[系統]: 讀取weight_storage0.txt")
+print("\n\n====================")
+print("[系統]: 讀取weight_storage0.txt")
 read_weight("weight_storage0.txt", weight)
 print("[系統]: 讀取weight_storage1.txt")
 read_weight("weight_storage1.txt", weight)
@@ -111,10 +135,10 @@ read_weight("weight_storage2.txt", weight)
 print("[系統]: 讀取weight_storage3.txt")
 read_weight("weight_storage3.txt", weight)
 
-print("[系統]: 以下為各 weight_storage 輸出，供檢查\n")
-print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}")
-print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}")
-print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}")
+print("[系統]: 以下為各 weight_storage，供檢查\n")
+print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}\n")
+print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
 print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
 
 
@@ -127,7 +151,8 @@ stride = 2 的padding 情況：
 0 x x x x x x x x x x x x x x 0
 
 '''
-print("\n[系統]: 以下為計算細節輸出，供檢查運算過程")
+print("\n\n====================")
+print("[系統]: 以下為計算細節輸出，供檢查運算過程")
 
 stride = 2
 conv331 = 0
@@ -168,11 +193,16 @@ for i in range(len(weight)):
                         f"{weight[i][k+6]:>5}(W{i}) * {tile2[i][j+k-2]:>5}(T3)  +  "
                         f"{conv331 - weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2]}(prev)")
         output.append(conv331)
+
 print("\n[系統]: 以下為最終計算結果")
-print("output =", output)
+hex_output = DecToHec(output)
+print("output(int10) =", output)
+print("output(int16) =", hex_output)
 
 
 print("\n[系統]: 正在儲存計算結果至 output.txt")
 with open('output.txt', 'w', encoding='utf-8') as f:
-    for i in range(len(output)):
-        f.write(str(output[i]) + " ")
+    for i in range(len(hex_output)):
+        f.write(str(hex_output[i]) + " ")
+
+print("\n[完成]: DW 運算完成")
