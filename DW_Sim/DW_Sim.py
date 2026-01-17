@@ -1,147 +1,170 @@
 # ======== 讀取檔案 -- 確認通道數用 ========
-with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
-    content = f.read()
-    if content.endswith('\n'):
-        channel_tile0_amount = content.count('\n')
+def channel_check():
+    with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile0_amount = content.count('\n')
+        else:
+            channel_tile0_amount = content.count('\n') + 1
+
+    with open("tile_buffer2.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile1_amount = content.count('\n')
+        else:
+            channel_tile1_amount = content.count('\n') + 1
+
+    with open("tile_buffer3.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile2_amount = content.count('\n')
+        else:
+            channel_tile2_amount = content.count('\n') + 1
+
+
+    if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount):
+        print("[錯誤]: 三個輸入文本的通道數量不相同，到底為什麼可以犯這種錯 =.=")
     else:
-        channel_tile0_amount = content.count('\n') + 1
-
-with open("tile_buffer2.txt", "r", encoding = "utf-8") as f:
-    content = f.read()
-    if content.endswith('\n'):
-        channel_tile1_amount = content.count('\n')
-    else:
-        channel_tile1_amount = content.count('\n') + 1
-
-with open("tile_buffer3.txt", "r", encoding = "utf-8") as f:
-    content = f.read()
-    if content.endswith('\n'):
-        channel_tile2_amount = content.count('\n')
-    else:
-        channel_tile2_amount = content.count('\n') + 1
+        channel_amount = channel_tile0_amount
+        tile_w = len(content.split())//channel_amount
+        if(tile_w%2 == 0):# W 為偶數，沒問題
+            print("[通過]: 通道檢查通過，無錯誤，夯")
+            return channel_amount, tile_w
+        else:
+            print("[錯誤]: W 不應該為奇數，你個SB")
+            return channel_amount, tile_w
 
 
-if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount):
-    print("[警告]: 三個輸入文本的通道數量不相同")
-else:
-    channel_amount = channel_tile0_amount
-    tile_w = len(content.split())//channel_amount
-    print(len(content.split()))
-
-
-
-with open("weight.txt", "r", encoding = "utf-8") as f:
-    content = f.read()
-    if content.endswith('\n'):
-        weight_amount = content.count('\n')
-    else:
-        weight_amount = content.count('\n') + 1
-
-if(weight_amount != channel_amount):
-    print("[警告]: 輸入文本的通道數量和權重數量不匹配！", "輸入通道數量:", channel_amount, " 權重數量(組):", weight_amount)
-
+channel_amount = 0
+tile_w = 0
+print("[系統]: 執行輸入文本檢查")
+channel_amount, tile_w = channel_check()
 
 
 # ======== 讀取檔案 -- 運算用 ========
-# ==== tile0 ====
-with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
-    # 讀取 txt 成 list
-    tile0_str = f.read().split()
+# ==== tile ====
+def read_tile(tile_path, tile):
+    with open(tile_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        tile_str = f.read().split()
 
-    # str 轉 int(16進制)
-    tile0_int = []
-    for i in tile0_str:
-        tile0_int.append(int(i, 16))
-    
-    # 將 tile 的 channel 切開並存為 2 維 list
-    tile0 = []
-    for i in range(0, channel_amount, 1):
-        tile0.append(tile0_int[i*tile_w+0:i*tile_w+tile_w])
-    
-    # 印出 tile 確認
-    for i in range(0, channel_amount, 1):
-        print(len(tile0[i]), tile0[i])
+        # str 轉 int(16進制)
+        tile_int = []
+        for i in tile_str:
+            tile_int.append(int(i, 16))
+        
+        # 將 tile 的 channel 切開並存為 2 維 list
+        for i in range(0, channel_amount, 1):
+            tile.append(tile_int[i*tile_w+0:i*tile_w+tile_w])
+        
+tile0 = []
+tile1 = []
+tile2 = []
+print("[系統]: 讀取tile_buffer1.txt")
+read_tile("tile_buffer1.txt", tile0)
+print("[系統]: 讀取tile_buffer2.txt")
+read_tile("tile_buffer2.txt", tile1)
+print("[系統]: 讀取tile_buffer3.txt")
+read_tile("tile_buffer3.txt", tile2)
 
-
-# ==== tile1 ====
-with open("tile_buffer2.txt", "r", encoding = "utf-8") as f:
-    # 讀取 txt 成 list
-    tile1_str = f.read().split()
-
-    # str 轉 int(16進制)
-    tile1_int = []
-    for i in tile1_str:
-        tile1_int.append(int(i, 16))
-    
-    # 將 tile 的 channel 切開並存為 2 維 list
-    tile1 = []
-    for i in range(0, channel_amount, 1):
-        tile1.append(tile1_int[i*tile_w+0:i*tile_w+tile_w])
-    
-    # 印出 tile 確認
-    for i in range(0, channel_amount, 1):
-        print(len(tile1[i]), tile1[i])
-
-
-# ==== tile2 ====
-with open("tile_buffer3.txt", "r", encoding = "utf-8") as f:
-    # 讀取 txt 成 list
-    tile2_str = f.read().split()
-
-    # str 轉 int(16進制)
-    tile2_int = []
-    for i in tile2_str:
-        tile2_int.append(int(i, 16))
-    
-    # 將 tile 的 channel 切開並存為 2 維 list
-    tile2 = []
-    for i in range(0, channel_amount, 1):
-        tile2.append(tile2_int[i*tile_w+0:i*tile_w+tile_w])
-    
-    # 印出 tile 確認
-    for i in range(0, channel_amount, 1):
-        print(len(tile2[i]), tile2[i])
+# 印出 tile0 確認
+print("\ntile_buffer1:")
+for i in range(0, channel_amount, 1):
+    print(len(tile0[i]), tile0[i])
+# 印出 tile1 確認
+print("\ntile_buffer2:")
+for i in range(0, channel_amount, 1):
+    print(len(tile0[i]), tile0[i])
+# 印出 tile2 確認
+print("\ntile_buffer3:")
+for i in range(0, channel_amount, 1):
+    print(len(tile0[i]), tile0[i])
 
 
 # ==== weight ====
-with open("weight.txt", "r", encoding = "utf-8") as f:
-    # 讀取 txt 成 list
-    weight_str = f.read().split()
+def read_weight(weight_path, weight):
+    with open(weight_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        weight_str = f.read().split()
 
-    # str 轉 int(16進制)
-    weight_int = []
-    for i in weight_str:
-        weight_int.append(int(i, 16))
+        # str 轉 int(16進制)
+        weight_int = []
 
-    # 將 filter 切開存為 2 維 list
-    weight = []
-    num_weight = len(weight_int)//9
-    for i in range(0, num_weight, 1):
-        weight.append(weight_int[i*9+0:i*9+9])
+        for i in range(0, len(weight_str), 1):
+            if(i == 1 or i == 2 or i == 3 or i == 7 or i == 11 or i== 15):
+                continue
+            elif(i == 0):
+                weight_int.append(int(weight_str[0]+weight_str[1], 16))
+            else:
+                weight_int.append(int(weight_str[i], 16))
+        
+        weight.append(weight_int)
 
-    # 印出 weight 確認
-    for i in range(0, num_weight, 1):
-        print(weight[i][0:3], weight[i][3:6], weight[i][6:9], sep="\n")
-        print("\n")
+weight = []
+print("[系統]: 讀取weight_storage0.txt")
+read_weight("weight_storage0.txt", weight)
+print("[系統]: 讀取weight_storage1.txt")
+read_weight("weight_storage1.txt", weight)
+print("[系統]: 讀取weight_storage2.txt")
+read_weight("weight_storage2.txt", weight)
+print("[系統]: 讀取weight_storage3.txt")
+read_weight("weight_storage3.txt", weight)
+print(weight[0], weight[1], sep="\n")
     
 
 
 # ======== 進行 DW 計算 ========
+'''
+stride = 2 的padding 情況：
+
+0 x x x x x x x x x x x x x x 0
+0 x x x x x x x x x x x x x x 0
+0 x x x x x x x x x x x x x x 0
+
+'''
+print("[系統]: 以下為計算細節輸出，供檢查運算過程")
+
 stride = 2
 conv331 = 0
 output = []
 for i in range(len(weight)):
-    for j in range(0, tile_w-stride, stride):
-        print(conv331)
-        conv331 = 0
-        for k in range(0, 3, 1):
-            conv331 = weight[i][k]*tile0[i][j+k] + weight[i][k+3]*tile1[i][j+k] + weight[i][k+6]*tile2[i][j+k] + conv331
-            print(f"{conv331:<8} = {weight[i][k]:<5} * {tile0[i][j+k]:<5}  +  "
-                f"{weight[i][k+3]:<5} * {tile1[i][j+k]:<5}  +  "
-                f"{weight[i][k+6]:<5} * {tile2[i][j+k]:<5}  +  prev")
+    for j in range(0, tile_w-stride+2, stride):
+        conv331 = weight[i][0]
+        print("bias: ", conv331)
+
+        # ======== padding左 ========
+        if(j==0):#padding左
+            conv331 = weight[i][1]*0 + weight[i][4]*0 + weight[i][7]*0 + conv331
+            print(f"{conv331:>8} = {weight[i][1]:>5}(W{i}) * {0:>5}(padd)+  "
+                f"{weight[i][4]:>5}(W{i}) * {0:>5}(padd)+  "
+                f"{weight[i][7]:>5}(W{i}) * {0:>5}(padd)+  "
+                f"{conv331}(bias)")
+            
+            for k in range(1, 3, 1):
+                conv331 = weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1] + conv331
+                print(f"{conv331:>8} = {weight[i][k+1]:>5}(W{i}) * {tile0[i][j+k-1]:>5}(T1)  +  "
+                    f"{weight[i][k+3+1]:>5}(W{i}) * {tile1[i][j+k-1]:>5}(T2)  +  "
+                    f"{weight[i][k+6+1]:>5}(W{i}) * {tile2[i][j+k-1]:>5}(T3)  +  "
+                    f"{conv331 - weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1]}(prev)")
+
+        # ======== 無padding ========        
+        else:
+            for k in range(1, 4, 1):
+                conv331 = weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2] + conv331
+
+                if(k == 1):
+                    print(f"{conv331:>8} = {weight[i][k]:>5}(W{i}) * {tile0[i][j+k-2]:>5}(T1)  +  "
+                        f"{weight[i][k+3]:>5}(W{i}) * {tile1[i][j+k-2]:>5}(T2)  +  "
+                        f"{weight[i][k+6]:>5}(W{i}) * {tile2[i][j+k-2]:>5}(T3)  +  "
+                        f"{conv331 - weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2]}(bias)")
+                else:
+                    print(f"{conv331:>8} = {weight[i][k]:>5}(W{i}) * {tile0[i][j+k-2]:>5}(T1)  +  "
+                        f"{weight[i][k+3]:>5}(W{i}) * {tile1[i][j+k-2]:>5}(T2)  +  "
+                        f"{weight[i][k+6]:>5}(W{i}) * {tile2[i][j+k-2]:>5}(T3)  +  "
+                        f"{conv331 - weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2]}(prev)")
         output.append(conv331)
-print(output)
+print("output = ", output)
 
 with open('output.txt', 'w', encoding='utf-8') as f:
-    f.write("這是第一行內容\n")
-    f.write("這是第二行內容")
+    for i in range(len(output)):
+        f.write(str(output[i]) + " ")
