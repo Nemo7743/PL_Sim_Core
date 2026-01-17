@@ -60,13 +60,14 @@ def read_tile(tile_path, tile):
 tile0 = []
 tile1 = []
 tile2 = []
-print("[系統]: 讀取tile_buffer1.txt")
+print("\n[系統]: 讀取tile_buffer1.txt")
 read_tile("tile_buffer1.txt", tile0)
 print("[系統]: 讀取tile_buffer2.txt")
 read_tile("tile_buffer2.txt", tile1)
 print("[系統]: 讀取tile_buffer3.txt")
 read_tile("tile_buffer3.txt", tile2)
 
+print("[系統]: 以下為各 tile_buffer 輸出，供檢查")
 # 印出 tile0 確認
 print("\ntile_buffer1:")
 for i in range(0, channel_amount, 1):
@@ -101,7 +102,7 @@ def read_weight(weight_path, weight):
         weight.append(weight_int)
 
 weight = []
-print("[系統]: 讀取weight_storage0.txt")
+print("\n[系統]: 讀取weight_storage0.txt")
 read_weight("weight_storage0.txt", weight)
 print("[系統]: 讀取weight_storage1.txt")
 read_weight("weight_storage1.txt", weight)
@@ -109,8 +110,12 @@ print("[系統]: 讀取weight_storage2.txt")
 read_weight("weight_storage2.txt", weight)
 print("[系統]: 讀取weight_storage3.txt")
 read_weight("weight_storage3.txt", weight)
-print(weight[0], weight[1], sep="\n")
-    
+
+print("[系統]: 以下為各 weight_storage 輸出，供檢查\n")
+print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}")
+print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}")
+print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}")
+print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
 
 
 # ======== 進行 DW 計算 ========
@@ -122,7 +127,7 @@ stride = 2 的padding 情況：
 0 x x x x x x x x x x x x x x 0
 
 '''
-print("[系統]: 以下為計算細節輸出，供檢查運算過程")
+print("\n[系統]: 以下為計算細節輸出，供檢查運算過程")
 
 stride = 2
 conv331 = 0
