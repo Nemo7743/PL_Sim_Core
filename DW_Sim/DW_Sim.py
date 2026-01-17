@@ -168,8 +168,11 @@ for i in range(len(weight)):
                         f"{weight[i][k+6]:>5}(W{i}) * {tile2[i][j+k-2]:>5}(T3)  +  "
                         f"{conv331 - weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2]}(prev)")
         output.append(conv331)
-print("output = ", output)
+print("\n[系統]: 以下為最終計算結果")
+print("output =", output)
 
+
+print("\n[系統]: 正在儲存計算結果至 output.txt")
 with open('output.txt', 'w', encoding='utf-8') as f:
     for i in range(len(output)):
         f.write(str(output[i]) + " ")
