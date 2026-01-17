@@ -1,21 +1,19 @@
-
-
 # ======== 讀取檔案 -- 確認通道數用 ========
-with open("tile0.txt", "r", encoding = "utf-8") as f:
+with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
     content = f.read()
     if content.endswith('\n'):
         channel_tile0_amount = content.count('\n')
     else:
         channel_tile0_amount = content.count('\n') + 1
 
-with open("tile1.txt", "r", encoding = "utf-8") as f:
+with open("tile_buffer2.txt", "r", encoding = "utf-8") as f:
     content = f.read()
     if content.endswith('\n'):
         channel_tile1_amount = content.count('\n')
     else:
         channel_tile1_amount = content.count('\n') + 1
 
-with open("tile2.txt", "r", encoding = "utf-8") as f:
+with open("tile_buffer3.txt", "r", encoding = "utf-8") as f:
     content = f.read()
     if content.endswith('\n'):
         channel_tile2_amount = content.count('\n')
@@ -46,7 +44,7 @@ if(weight_amount != channel_amount):
 
 # ======== 讀取檔案 -- 運算用 ========
 # ==== tile0 ====
-with open("tile0.txt", "r", encoding = "utf-8") as f:
+with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
     # 讀取 txt 成 list
     tile0_str = f.read().split()
 
@@ -67,7 +65,7 @@ with open("tile0.txt", "r", encoding = "utf-8") as f:
 
 
 # ==== tile1 ====
-with open("tile1.txt", "r", encoding = "utf-8") as f:
+with open("tile_buffer2.txt", "r", encoding = "utf-8") as f:
     # 讀取 txt 成 list
     tile1_str = f.read().split()
 
@@ -88,7 +86,7 @@ with open("tile1.txt", "r", encoding = "utf-8") as f:
 
 
 # ==== tile2 ====
-with open("tile1.txt", "r", encoding = "utf-8") as f:
+with open("tile_buffer3.txt", "r", encoding = "utf-8") as f:
     # 讀取 txt 成 list
     tile2_str = f.read().split()
 
@@ -131,18 +129,25 @@ with open("weight.txt", "r", encoding = "utf-8") as f:
     
 
 
-#======== 進行 DW 計算 ========
+# ======== 進行 DW 計算 ========
 stride = 2
-
+conv331 = 0
 output = []
 for i in range(len(weight)):
-    conv331 = 0
+    
     print(conv331)
     for j in range(0, tile_w-stride, stride):
+        conv331 = 0
         for k in range(0, 3, 1):
             conv331 = weight[i][k]*tile0[i][j+k] + weight[i][k+3]*tile1[i][j+k] + weight[i][k+6]*tile2[i][j+k] + conv331
             print(f"{conv331:<8} = {weight[i][k]:<5} * {tile0[i][j+k]:<5}  +  "
                 f"{weight[i][k+3]:<5} * {tile1[i][j+k]:<5}  +  "
-                f"{weight[i][k+6]:<5} * {tile2[i][j+k]:<5}  +  prev conv331")
-    output.append(conv331)
+                f"{weight[i][k+6]:<5} * {tile2[i][j+k]:<5}  +  prev")
+        output.append(conv331)
 print(output)
+
+'''
+with open('output.txt', 'w', encoding='utf-8') as f:
+    f.write("這是第一行內容\n")
+    f.write("這是第二行內容")
+'''
