@@ -55,7 +55,6 @@ with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
     
     # 將 tile 的 channel 切開並存為 2 維 list
     tile0 = []
-    #num_weight = len(tile0_int)//9
     for i in range(0, channel_amount, 1):
         tile0.append(tile0_int[i*tile_w+0:i*tile_w+tile_w])
     
@@ -76,7 +75,6 @@ with open("tile_buffer2.txt", "r", encoding = "utf-8") as f:
     
     # 將 tile 的 channel 切開並存為 2 維 list
     tile1 = []
-    #num_weight = len(tile0_int)//9
     for i in range(0, channel_amount, 1):
         tile1.append(tile1_int[i*tile_w+0:i*tile_w+tile_w])
     
@@ -97,7 +95,6 @@ with open("tile_buffer3.txt", "r", encoding = "utf-8") as f:
     
     # 將 tile 的 channel 切開並存為 2 維 list
     tile2 = []
-    #num_weight = len(tile0_int)//9
     for i in range(0, channel_amount, 1):
         tile2.append(tile2_int[i*tile_w+0:i*tile_w+tile_w])
     
@@ -134,9 +131,8 @@ stride = 2
 conv331 = 0
 output = []
 for i in range(len(weight)):
-    
-    print(conv331)
     for j in range(0, tile_w-stride, stride):
+        print(conv331)
         conv331 = 0
         for k in range(0, 3, 1):
             conv331 = weight[i][k]*tile0[i][j+k] + weight[i][k+3]*tile1[i][j+k] + weight[i][k+6]*tile2[i][j+k] + conv331
@@ -146,8 +142,6 @@ for i in range(len(weight)):
         output.append(conv331)
 print(output)
 
-'''
 with open('output.txt', 'w', encoding='utf-8') as f:
     f.write("這是第一行內容\n")
     f.write("這是第二行內容")
-'''
