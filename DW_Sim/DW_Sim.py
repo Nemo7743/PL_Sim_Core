@@ -22,20 +22,22 @@ with open("tile2.txt", "r", encoding = "utf-8") as f:
     else:
         channel_tile2_amount = content.count('\n') + 1
 
-with open("weight.txt", "r", encoding = "utf-8") as f:
-    content = f.read()
-    if content.endswith('\n'):
-        weight_amount = content.count('\n')
-    else:
-        weight_amount = content.count('\n') + 1
-
 
 if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount):
     print("[警告]: 三個輸入文本的通道數量不相同")
 else:
     channel_amount = channel_tile0_amount
     tile_w = len(content.split())//channel_amount
-    print(tile_w)
+    print(len(content.split()))
+
+
+
+with open("weight.txt", "r", encoding = "utf-8") as f:
+    content = f.read()
+    if content.endswith('\n'):
+        weight_amount = content.count('\n')
+    else:
+        weight_amount = content.count('\n') + 1
 
 if(weight_amount != channel_amount):
     print("[警告]: 輸入文本的通道數量和權重數量不匹配！", "輸入通道數量:", channel_amount, " 權重數量(組):", weight_amount)
@@ -141,10 +143,6 @@ for i in range(len(weight)):
             conv331 = weight[i][k]*tile0[i][j+k] + weight[i][k+3]*tile1[i][j+k] + weight[i][k+6]*tile2[i][j+k] + conv331
             print(f"{conv331:<8} = {weight[i][k]:<5} * {tile0[i][j+k]:<5}  +  "
                 f"{weight[i][k+3]:<5} * {tile1[i][j+k]:<5}  +  "
-                f"{weight[i][k+6]:<5} * {tile2[i][j+k]:<5}  +  {conv331:<8}")
+                f"{weight[i][k+6]:<5} * {tile2[i][j+k]:<5}  +  prev conv331")
     output.append(conv331)
 print(output)
-
-with open('output.txt', 'w', encoding='utf-8') as f:
-    f.write("這是第一行內容\n")
-    f.write("這是第二行內容")
