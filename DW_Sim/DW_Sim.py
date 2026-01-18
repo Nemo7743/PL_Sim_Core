@@ -136,11 +136,11 @@ tile1 = []
 tile2 = []
 print("\n\n====================")
 print("[系統]: 讀取tile_buffer1.txt")
-read_tile("tile_buffer1.txt", tile0)
+read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
 print("[系統]: 讀取tile_buffer2.txt")
-read_tile("tile_buffer2.txt", tile1)
+read_tile("tile_buffer2.txt", tile1, channel_amount, tile_w)
 print("[系統]: 讀取tile_buffer3.txt")
-read_tile("tile_buffer3.txt", tile2)
+read_tile("tile_buffer3.txt", tile2, channel_amount, tile_w)
 
 print("[系統]: 以下為各 tile_buffer，供檢查")
 # 印出 tile0 確認
