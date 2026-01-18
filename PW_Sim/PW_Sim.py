@@ -289,14 +289,15 @@ def PW(stride, show_detail):
     print("[系統]: 讀取tile_buffer1_Tr.txt")
     read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
 
-    print("[系統]: 以下為各 tile_buffer，供檢查")
-    # 印出 tile0 確認
-    print("\ntile_buffer1:")
-    for i in range(0, channel_amount, 1):
-        print("W =", len(tile0[i]), f"tile1_{i}: ", end="")
-        for j in range(0, len(tile0[i]), 1):
-            print(f"{tile0[i][j]:<5}", end="")
-        print("\n", end="")
+    if(show_detail):
+        print("[系統]: 以下為各 tile_buffer，供檢查")
+        # 印出 tile0 確認
+        print("\ntile_buffer1:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile0[i]), f"tile1_{i}: ", end="")
+            for j in range(0, len(tile0[i]), 1):
+                print(f"{tile0[i][j]:<5}", end="")
+            print("\n", end="")
     
     # ==== weight ====
     weight = []
