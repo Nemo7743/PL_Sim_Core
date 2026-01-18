@@ -415,7 +415,7 @@ def DW(stride, show_detail):
     channel_amount = 0
     tile_w = 0
     print("\n\n====================")
-    print("[系統]: 執行輸入文本檢查")
+    print("[系統]: 執行通道數檢查")
     channel_amount, tile_w = channel_check()
 
     # ======== 讀取檔案 -- 運算用 ========
@@ -465,9 +465,9 @@ def DW(stride, show_detail):
     if(show_detail):
         print("[系統]: 以下為各 weight_storage，供檢查\n")
         print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
-        print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}\n")
-        print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
-        print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
+        print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}\n")
+        print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
+        print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
 
 
     # ======== 進行 DW 計算 ========

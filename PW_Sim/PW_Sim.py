@@ -1,51 +1,37 @@
-# ======== 讀取檔案 -- 確認通道數用 ========
-def channel_check():
-    with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile0_amount = content.count('\n')
-        else:
-            channel_tile0_amount = content.count('\n') + 1
+# ======== 小工具 ========
+# 轉置txt
+def transpose_txt(input_file, output_file):
+    try:
+        # 1. 讀取檔案
+        with open(input_file, 'r', encoding='utf-8') as f:
+            # 讀取每一行，去除前後空白，並依據空格切割成 list
+            # 使用 if line.strip() 是為了避免讀取到空行
+            matrix = [line.strip().split() for line in f if line.strip()]
 
-    with open("tile_buffer2.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile1_amount = content.count('\n')
-        else:
-            channel_tile1_amount = content.count('\n') + 1
+        # 檢查是否有資料
+        if not matrix:
+            print("檔案是空的。")
+            return
 
-    with open("tile_buffer3.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile2_amount = content.count('\n')
-        else:
-            channel_tile2_amount = content.count('\n') + 1
-    
-    with open("tile_buffer4.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile3_amount = content.count('\n')
-        else:
-            channel_tile3_amount = content.count('\n') + 1
+        # 2. 轉置資料
+        # zip(*matrix) 會將原本的 Row 拆開並重新組合成 Column
+        transposed_matrix = list(zip(*matrix))
 
+        # 3. 寫入新檔案
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for row in transposed_matrix:
+                # 將 tuple 轉回字串，並用空格連接
+                f.write(" ".join(row) + "\n")
+        
+        print(f"[系統]: {input_file} 轉置完成！已儲存至 {output_file}")
 
-    if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount or channel_tile3_amount != channel_tile0_amount or channel_tile3_amount != channel_tile1_amount or channel_tile3_amount != channel_tile2_amount):
-        print("[錯誤]: 三個輸入文本的通道數量不相同，到底為什麼可以犯這種錯 =.=")
-    else:
-        channel_amount = channel_tile0_amount
-        tile_w = len(content.split())//channel_amount
-        if(tile_w%2 == 0):# W 為偶數，沒問題
-            print("[通過]: 通道檢查通過，無錯誤，夯")
-            return channel_amount, tile_w
-        else:
-            print("[錯誤]: W 不應該為奇數，你個SB")
-            return channel_amount, tile_w
+    except FileNotFoundError:
+        print(f"找不到檔案：{input_file}")
+    except Exception as e:
+        print(f"發生錯誤：{e}")
 
-channel_amount = 0
-tile_w = 0
-print("[系統]: 執行輸入文本檢查")
-channel_amount, tile_w = channel_check()
-
+# 執行轉置
+#transpose_txt('tile_buffer1.txt', 'tile_buffer1.txt')
 
 
 # ======== Hex to Dec ======== (Q16.0)
@@ -117,6 +103,54 @@ def DecToHex(dec_input):
     return hex_output
 '''
 
+
+
+# ======== 讀取檔案 -- 確認通道數用 ========
+def channel_check():
+    with open("weight_storage0.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        weight0_len = len(content) - 4
+    
+    with open("weight_storage1.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        weight1_len = len(content) - 4
+    
+    with open("weight_storage2.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        weight2_len = len(content) - 4
+
+    with open("weight_storage3.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        weight3_len = len(content) - 4
+    
+    with open("tile_buffer1_Tr.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile0_amount = content.count('\n')
+        else:
+            channel_tile0_amount = content.count('\n') + 1
+
+
+    if(channel_tile0_amount != weight0_len or channel_tile0_amount != weight1_len or channel_tile0_amount != weight2_len or channel_tile0_amount != weight3_len):
+        print("[錯誤]: 權重和 FMap 的通道數量不匹配，到底為什麼可以犯這種錯 =.=")
+    else:
+        channel_amount = channel_tile0_amount
+        tile_w = len(content.split())//channel_amount
+        if(tile_w%2 == 0):# W 為偶數，沒問題
+            print("[通過]: 通道檢查通過，無錯誤，夯")
+            return channel_amount, tile_w
+        else:
+            print("[錯誤]: W 不應該為奇數，你個SB")
+            return channel_amount, tile_w
+
+'''
+channel_amount = 0
+tile_w = 0
+print("[系統]: 執行輸入文本檢查")
+channel_amount, tile_w = channel_check()
+'''
+
+
 # ======== 讀取檔案 -- 運算用 ========
 # ==== tile ====
 def read_tile(tile_path, tile, channel_amount, tile_w):
@@ -132,6 +166,7 @@ def read_tile(tile_path, tile, channel_amount, tile_w):
         for i in range(0, channel_amount, 1):
             tile.append(tile_int[i*tile_w+0:i*tile_w+tile_w])
 
+'''
 tile0 = []
 tile1 = []
 tile2 = []
@@ -163,3 +198,157 @@ for i in range(0, channel_amount, 1):
 print("\ntile_buffer4:")
 for i in range(0, channel_amount, 1):
     print("W =", len(tile3[i]), f"tile4_{i}: ", tile3[i])
+'''
+
+# ==== weight ====
+def read_weight(weight_path, weight):
+    with open(weight_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        weight_str_a = f.read().split()
+
+        #將bias的兩個字串合併以及跳過再存回
+        weight_str_b = []
+        for i in range(0, len(weight_str_a), 1):
+            if(i == 1 or i == 2 or i == 3):
+                continue
+            elif(i == 0):
+                weight_str_b.append(weight_str_a[0]+weight_str_a[1])
+            else:
+                weight_str_b.append(weight_str_a[i])
+
+        # str 轉 int(16進制)
+        weight_int = []
+        weight_int = HexToDec(weight_str_b)
+        
+        weight.append(weight_int)
+'''
+weight = []
+print("\n\n====================")
+print("[系統]: 讀取weight_storage0.txt")
+read_weight("weight_storage0.txt", weight)
+print("[系統]: 讀取weight_storage1.txt")
+read_weight("weight_storage1.txt", weight)
+print("[系統]: 讀取weight_storage2.txt")
+read_weight("weight_storage2.txt", weight)
+print("[系統]: 讀取weight_storage3.txt")
+read_weight("weight_storage3.txt", weight)
+
+print("[系統]: 以下為各 weight_storage，供檢查\n")
+print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}\n")
+print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
+print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
+'''
+
+# ======== 進行 PW 計算 ========
+def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w = 0):
+    conv_PW = 0
+    output = []
+    if(stride != 1):
+        print("[錯誤]: Stride 在 PW 只能是 1，天才")
+        output.append("Poop")
+        return output
+
+
+    for i in range(0, len(weight), 1):
+        for j in range(0, tile_w, 1):
+            output_inn = []
+            conv_PW = weight[i][0]
+            for k in range(0, len(tile0), 1):
+                conv_PW = weight[i][k+1] * tile0[k][j] + conv_PW
+                if(show_detail):
+                    if(k==0):
+                        print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(bias)")
+                    else:
+                        print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(prev)")
+            output_inn.append(conv_PW)
+            if(show_detail):
+                print(conv_PW)
+        output.append(output_inn)
+
+    return output
+
+
+def PW(stride, show_detail):
+    # ======== 轉置輸入 FMap 檔案 ========
+    print("====================")
+    print("[系統]: 轉置輸入 FMap 檔案")
+    transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+
+    # ======== 讀取檔案 -- 確認通道數用 ========
+    channel_amount = 0
+    tile_w = 0
+    print("\n\n====================")
+    print("[系統]: 執行通道數檢查")
+    channel_amount, tile_w = channel_check()
+
+    # ======== 讀取檔案 -- 運算用 ========
+    # ==== tile ====
+    tile0 = []
+    print("\n\n====================")
+    print("[系統]: 讀取tile_buffer1_Tr.txt")
+    read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
+
+    print("[系統]: 以下為各 tile_buffer，供檢查")
+    # 印出 tile0 確認
+    print("\ntile_buffer1:")
+    for i in range(0, channel_amount, 1):
+        print("W =", len(tile0[i]), f"tile1_{i}: ", end="")
+        for j in range(0, len(tile0[i]), 1):
+            print(f"{tile0[i][j]:<5}", end="")
+        print("\n", end="")
+    
+    # ==== weight ====
+    weight = []
+    print("\n\n====================")
+
+    print("[系統]: 讀取weight_storage0.txt")
+    read_weight("weight_storage0.txt", weight)
+    print("[系統]: 讀取weight_storage1.txt")
+    read_weight("weight_storage1.txt", weight)
+    print("[系統]: 讀取weight_storage2.txt")
+    read_weight("weight_storage2.txt", weight)
+    print("[系統]: 讀取weight_storage3.txt")
+    read_weight("weight_storage3.txt", weight)
+
+    if(show_detail):
+        print("[系統]: 以下為各 weight_storage，供檢查\n")
+        print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+        print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}\n")
+        print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
+        print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
+    
+    # ======== 進行 PW 計算 ========
+    print("\n\n====================")
+    output = Calculation(stride, show_detail, weight, tile0, tile_w)
+
+    if(show_detail):
+        print("[系統]: 以下為最終計算結果")
+
+    # 進位轉換
+    hex_output = []
+    for i in range(0, len(output), 1):
+        hex_output.append(DecToHex(output[i]))
+
+    if(show_detail):
+        print("output(Float10) =", output)
+        print("output( Q8.8  ) =", hex_output)
+        print("\n")
+    
+    # ======== 儲存運算結果 ========
+    print("[系統]: 正在儲存計算結果至 output_need_transpose.txt")
+    with open('output_need_transpose.txt', 'w', encoding='utf-8') as f:
+        for i in range(len(hex_output)):
+            for j in range(len(hex_output[i])):
+                if(j == len(hex_output[i]) - 1):
+                    f.write(str(hex_output[i][j]) + "\n")
+                else:
+                    f.write(str(hex_output[i][j]) + " ")
+    
+    transpose_txt("output_need_transpose.txt", "output.txt")
+
+
+    print("\n[完成]: PW 運算完成")
+
+if __name__ == "__main__":
+    PW(stride = 1, show_detail = False)
