@@ -43,7 +43,7 @@ channel_amount, tile_w = channel_check()
 '''
 
 
-
+'''
 # ======== Hex to Dec ======== (Q16.0)
 def HexToDec(hex_input):
     dec_output = []
@@ -64,9 +64,10 @@ def DecToHex(dec_input):
         hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
 
     return hex_output
-
-
 '''
+
+
+
 # ======== Hex to Dec ======== (Q8.8)
 def HexToDec(hex_input):
     scale_factor = 256.0
@@ -111,7 +112,7 @@ def DecToHex(dec_input):
         hex_output.append(f"{int_val & 0xFFFF:04X}")
 
     return hex_output
-'''
+
 
 
 
