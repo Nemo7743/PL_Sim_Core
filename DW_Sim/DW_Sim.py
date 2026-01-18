@@ -453,4 +453,4 @@ def DW(stride, show_detail):
     print("\n[完成]: DW 運算完成")
 
 if __name__ == "__main__":
-    DW(stride = 1, show_detail = False)
+    DW(stride = 1, show_detail = True)
