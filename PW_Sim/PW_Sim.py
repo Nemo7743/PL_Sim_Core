@@ -251,8 +251,9 @@ def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w 
 
 
     for i in range(0, len(weight), 1):
+        output_inn = []
         for j in range(0, tile_w, 1):
-            output_inn = []
+            
             conv_PW = weight[i][0]
             for k in range(0, len(tile0), 1):
                 conv_PW = weight[i][k+1] * tile0[k][j] + conv_PW
@@ -352,4 +353,4 @@ def PW(stride, show_detail):
     print("\n[完成]: PW 運算完成")
 
 if __name__ == "__main__":
-    PW(stride = 1, show_detail = False)
+    PW(stride = 1, show_detail = True)
