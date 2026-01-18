@@ -372,6 +372,7 @@ def DW(stride, show_detail):
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0
     tile_w = 0
+    print("====================")
     print("[系統]: 執行輸入文本檢查")
     channel_amount, tile_w = channel_check()
 
@@ -437,9 +438,10 @@ def DW(stride, show_detail):
     if(show_detail):
         print("output(Float10) =", output)
         print("output( Q8.8  ) =", hex_output)
+        print("\n")
 
     # ======== 儲存運算結果 ========
-    print("\n[系統]: 正在儲存計算結果至 output.txt")
+    print("[系統]: 正在儲存計算結果至 output.txt")
     with open('output.txt', 'w', encoding='utf-8') as f:
         for i in range(len(hex_output)):
             for j in range(len(hex_output[i])):
