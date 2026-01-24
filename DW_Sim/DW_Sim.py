@@ -198,8 +198,15 @@ def read_weight(weight_path, weight):
         # 讀取 txt 成 list
         weight_str_a = f.read().split()
 
-        #將bias的兩個字串合併以及跳過再存回
+        # 
         weight_str_b = []
+        for i in range(0, len(weight_str_a), 1):
+            if(i == 0):
+                weight_str_b.append(0)
+            else:
+                weight_str_b.append(weight_str_a[i])
+
+        '''
         for i in range(0, len(weight_str_a), 1):
             if(i == 1 or i == 2 or i == 3 or i == 7 or i == 11 or i== 15):
                 continue
@@ -207,6 +214,7 @@ def read_weight(weight_path, weight):
                 weight_str_b.append(weight_str_a[0]+weight_str_a[1])
             else:
                 weight_str_b.append(weight_str_a[i])
+        '''
 
         # str 轉 int(16進制)
         weight_int = []
