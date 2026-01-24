@@ -33,7 +33,7 @@ def transpose_txt(input_file, output_file):
 # 執行轉置
 #transpose_txt('tile_buffer1.txt', 'tile_buffer1.txt')
 
-'''
+
 # ======== Hex to Dec ======== (Q16.0)
 def HexToDec(hex_input):
     dec_output = []
@@ -54,11 +54,9 @@ def DecToHex(dec_input):
         hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
 
     return hex_output
+
+
 '''
-
-
-
-
 # ======== Hex to Dec ======== (Q8.8)
 def HexToDec(hex_input):
     scale_factor = 256.0
@@ -103,7 +101,7 @@ def DecToHex(dec_input):
         hex_output.append(f"{int_val & 0xFFFF:04X}")
 
     return hex_output
-
+'''
 
 
 
@@ -117,16 +115,27 @@ def channel_check():
         content = f.read().split()
         weight1_len = len(content) - 4
     
-    with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
+    with open("weight_storage2.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
-        channel_tile0_amount = len(content)
+        weight2_len = len(content) - 4
+
+    with open("weight_storage3.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        weight3_len = len(content) - 4
+    
+    with open("tile_buffer1_Tr.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile0_amount = content.count('\n')
+        else:
+            channel_tile0_amount = content.count('\n') + 1
 
 
-    if(channel_tile0_amount != weight0_len or channel_tile0_amount != weight1_len):
+    if(channel_tile0_amount != weight0_len or channel_tile0_amount != weight1_len or channel_tile0_amount != weight2_len or channel_tile0_amount != weight3_len):
         print("[錯誤]: 權重和 FMap 的通道數量不匹配，到底為什麼可以犯這種錯 =.=")
     else:
         channel_amount = channel_tile0_amount
-        tile_w = len(content)//channel_amount
+        tile_w = len(content.split())//channel_amount
         if(tile_w%2 == 0):# W 為偶數，沒問題
             print("[通過]: 通道檢查通過，無錯誤，夯")
             return channel_amount, tile_w
@@ -231,12 +240,12 @@ print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
 print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
 '''
 
-# ======== 進行 FC 計算 ========
+# ======== 進行 PW 計算 ========
 def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w = 0):
     conv_PW = 0
     output = []
     if(stride != 1):
-        print("[錯誤]: Stride 在 FC 只能是 1，天才")
+        print("[錯誤]: Stride 在 PW 只能是 1，天才")
         output.append("Poop")
         return output
 
@@ -261,11 +270,11 @@ def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w 
     return output
 
 
-def FC(stride, show_detail):
+def ConvLast(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
     print("====================")
-    print("[系統]: 輸入 FMap 檔案，FC不用轉置")
-    #transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    print("[系統]: 轉置輸入 FMap 檔案")
+    transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0
@@ -278,8 +287,8 @@ def FC(stride, show_detail):
     # ==== tile ====
     tile0 = []
     print("\n\n====================")
-    print("[系統]: 讀取tile_buffer1.txt")
-    read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
+    print("[系統]: 讀取tile_buffer1_Tr.txt")
+    read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
 
     if(show_detail):
         print("[系統]: 以下為各 tile_buffer，供檢查")
@@ -299,15 +308,22 @@ def FC(stride, show_detail):
     read_weight("weight_storage0.txt", weight)
     print("[系統]: 讀取weight_storage1.txt")
     read_weight("weight_storage1.txt", weight)
+    print("[系統]: 讀取weight_storage2.txt")
+    read_weight("weight_storage2.txt", weight)
+    print("[系統]: 讀取weight_storage3.txt")
+    read_weight("weight_storage3.txt", weight)
 
     if(show_detail):
         print("[系統]: 以下為各 weight_storage，供檢查\n")
         print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
-        print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}")
+        print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}\n")
+        print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
+        print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
     
-    # ======== 進行 FC 計算 ========
+    # ======== 進行 ConvLast 計算 ========
     print("\n\n====================")
     output = Calculation(stride, show_detail, weight, tile0, tile_w)
+
     if(show_detail):
         print("[系統]: 以下為最終計算結果")
 
@@ -334,8 +350,7 @@ def FC(stride, show_detail):
     transpose_txt("output_need_transpose.txt", "output.txt")
 
 
-    print("\n[完成]: FC 運算完成")
-    
+    print("\n[完成]: ConvLast 運算完成")
 
 if __name__ == "__main__":
-    FC(stride = 1, show_detail = False)
+    ConvLast(stride = 1, show_detail = True)
