@@ -198,29 +198,30 @@ def read_weight(weight_path, weight):
         # 讀取 txt 成 list
         weight_str_a = f.read().split()
 
-        # 
-        weight_str_b = []
-        for i in range(0, len(weight_str_a), 1):
-            if(i == 0):
-                weight_str_b.append(0)
-            else:
-                weight_str_b.append(weight_str_a[i])
+    # 將讀取到的權重做成一個 list
+    weight_str_b = []
+    for i in range(0, len(weight_str_a), 1):
+        if(i == 0):
+            weight_str_b.append('0')
+        else:
+            weight_str_b.append(weight_str_a[i])
 
-        '''
-        for i in range(0, len(weight_str_a), 1):
-            if(i == 1 or i == 2 or i == 3 or i == 7 or i == 11 or i== 15):
-                continue
-            elif(i == 0):
-                weight_str_b.append(weight_str_a[0]+weight_str_a[1])
-            else:
-                weight_str_b.append(weight_str_a[i])
-        '''
+    '''
+    for i in range(0, len(weight_str_a), 1):
+        if(i == 1 or i == 2 or i == 3 or i == 7 or i == 11 or i== 15):
+            continue
+        elif(i == 0):
+            weight_str_b.append(weight_str_a[0]+weight_str_a[1])
+        else:
+            weight_str_b.append(weight_str_a[i])
+    '''
 
-        # str 轉 int(16進制)
-        weight_int = []
-        weight_int = HexToDec(weight_str_b)
-        
-        weight.append(weight_int)
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec(weight_str_b)
+    
+    # 將本次權重插入 list 形成二維陣列
+    weight.append(weight_int)
 '''
 weight = []
 print("\n\n====================")
@@ -239,6 +240,21 @@ print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}\n")
 print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
 print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
 '''
+# ==== bias ====
+def read_bias(bias_path, weight):
+    with open(bias_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        bias_str_a = f.read().split()
+    
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec(bias_str_a)
+
+    # 將 bias 存入陣列的 [0]
+    for i in range(0, len(bias_str_a), 1):
+        weight[i][0] = weight_int[i]
+
+
 
 # ======== 進行 DW 計算 ========
 def Calculation(stride = 2, show_detail = True, weight = [], tile0 = [], tile1 = [], tile2 = [], tile_w = 0):
@@ -469,6 +485,11 @@ def DW(stride, show_detail):
     read_weight("weight_storage2.txt", weight)
     print("[系統]: 讀取weight_storage3.txt")
     read_weight("weight_storage3.txt", weight)
+    
+    # ==== bias ====
+    print("\n\n====================")
+    print("[系統]: 讀取bias_storage.txt")
+    read_bias("bias_storage.txt", weight)
 
     if(show_detail):
         print("[系統]: 以下為各 weight_storage，供檢查\n")
@@ -476,7 +497,6 @@ def DW(stride, show_detail):
         print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}\n")
         print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
         print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
-
 
     # ======== 進行 DW 計算 ========
     print("\n\n====================")
