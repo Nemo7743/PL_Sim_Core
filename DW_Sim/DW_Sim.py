@@ -477,7 +477,6 @@ def DW(stride, show_detail):
     read_weight("weight_storage3.txt", weight)
     
     # ==== bias ====
-    print("\n\n====================")
     print("[系統]: 讀取bias_storage.txt")
     read_bias("bias_storage.txt", weight)
 
