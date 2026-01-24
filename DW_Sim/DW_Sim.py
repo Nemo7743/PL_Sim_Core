@@ -200,21 +200,11 @@ def read_weight(weight_path, weight):
 
     # 將讀取到的權重做成一個 list
     weight_str_b = []
-    for i in range(0, len(weight_str_a), 1):
+    for i in range(0, len(weight_str_a)+1, 1):
         if(i == 0):
             weight_str_b.append('0')
         else:
-            weight_str_b.append(weight_str_a[i])
-
-    '''
-    for i in range(0, len(weight_str_a), 1):
-        if(i == 1 or i == 2 or i == 3 or i == 7 or i == 11 or i== 15):
-            continue
-        elif(i == 0):
-            weight_str_b.append(weight_str_a[0]+weight_str_a[1])
-        else:
-            weight_str_b.append(weight_str_a[i])
-    '''
+            weight_str_b.append(weight_str_a[i-1])
 
     # str 轉 int(16進制)
     weight_int = []
