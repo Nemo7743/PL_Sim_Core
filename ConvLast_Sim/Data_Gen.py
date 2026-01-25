@@ -59,7 +59,7 @@ print(text1)
 with open('weight_storage0.txt', 'w', encoding='utf-8') as f:
     f.write("0000 000b 0000 0000\n")
     f.write(text1)
-
+'''
 print("文本2：")
 print(text2)
 with open('weight_storage1.txt', 'w', encoding='utf-8') as f:
@@ -77,6 +77,6 @@ print(text4)
 with open('weight_storage3.txt', 'w', encoding='utf-8') as f:
     f.write("0000 00b 0000 0000\n")
     f.write(text4)
-
+'''
 # 如果你想將結果保存到檔案，可以取消下面這行的註解：
 # with open("output.txt", "w") as f: f.write(f"文本1：\n{text1}\n\n文本2：\n{text2}")

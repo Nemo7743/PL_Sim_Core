@@ -109,19 +109,19 @@ def DecToHex(dec_input):
 def channel_check():
     with open("weight_storage0.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
-        weight0_len = len(content) - 4
+        weight0_len = len(content)
     
     with open("weight_storage1.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
-        weight1_len = len(content) - 4
+        weight1_len = len(content)
     
     with open("weight_storage2.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
-        weight2_len = len(content) - 4
+        weight2_len = len(content)
 
     with open("weight_storage3.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
-        weight3_len = len(content) - 4
+        weight3_len = len(content)
     
     with open("tile_buffer1_Tr.txt", "r", encoding = "utf-8") as f:
         content = f.read()
@@ -240,7 +240,7 @@ print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
 print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
 '''
 
-# ======== 進行 PW 計算 ========
+# ======== 進行 ConvLast 計算 ========
 def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w = 0):
     conv_PW = 0
     output = []
