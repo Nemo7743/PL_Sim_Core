@@ -107,6 +107,13 @@ def DecToHex(dec_input):
 
 # ======== 讀取檔案 -- 確認通道數用 ========
 def channel_check():
+    with open("bias_storage.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        bias_len = len(content)
+        if(bias_len != 4):
+            print(f"[錯誤]: Bias 數量應該要是 4，但偵測到 {bias_len} 個 bias")
+            return "FUC it's wrong"
+
     with open("tile_buffer1_Tr.txt", "r", encoding = "utf-8") as f:
         content = f.read()
         if content.endswith('\n'):
