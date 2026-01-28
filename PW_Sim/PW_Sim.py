@@ -33,7 +33,7 @@ def transpose_txt(input_file, output_file):
 # 執行轉置
 #transpose_txt('tile_buffer1.txt', 'tile_buffer1.txt')
 
-
+'''
 # ======== Hex to Dec ======== (Q16.0)
 def HexToDec(hex_input):
     dec_output = []
@@ -54,9 +54,9 @@ def DecToHex(dec_input):
         hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
 
     return hex_output
-
-
 '''
+
+
 # ======== Hex to Dec ======== (Q8.8)
 def HexToDec(hex_input):
     scale_factor = 256.0
@@ -101,7 +101,7 @@ def DecToHex(dec_input):
         hex_output.append(f"{int_val & 0xFFFF:04X}")
 
     return hex_output
-'''
+
 
 
 
@@ -165,6 +165,23 @@ def read_tile(tile_path, tile, channel_amount, tile_w):
         # 將 tile 的 channel 切開並存為 2 維 list
         for i in range(0, channel_amount, 1):
             tile.append(tile_int[i*tile_w+0:i*tile_w+tile_w])
+
+def assem_bias(bias_path):
+    bias_str = []
+
+    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage2.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage3.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+
+    with open(bias_path, "w", encoding = "utf-8") as f:
+        for i in range(0, len(bias_str), 1):
+            f.write(bias_str[i])
+            f.write("\n")
 
 '''
 tile0 = []
@@ -289,6 +306,8 @@ def PW(stride, show_detail):
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
     transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    # 讀取 bias 0 - 3 組合成新檔案
+    assem_bias("bias_storage.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0

@@ -251,6 +251,23 @@ def read_bias(bias_path, weight):
     for i in range(0, len(bias_str_a), 1):
         weight[i][0] = weight_int[i]
 
+def assem_bias(bias_path):
+    bias_str = []
+
+    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage2.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage3.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+
+    with open(bias_path, "w", encoding = "utf-8") as f:
+        for i in range(0, len(bias_str), 1):
+            f.write(bias_str[i])
+            f.write("\n")
+
 
 
 # ======== 進行 DW 計算 ========
@@ -431,6 +448,8 @@ def DW(stride, show_detail):
     transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
     transpose_txt("tile_buffer2.txt", "tile_buffer2_Tr.txt")
     transpose_txt("tile_buffer3.txt", "tile_buffer3_Tr.txt")
+    # 讀取 bias 0 - 3 組合成新檔案
+    assem_bias("bias_storage.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0

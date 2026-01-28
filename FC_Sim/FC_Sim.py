@@ -244,6 +244,19 @@ def read_bias(bias_path, weight):
     for i in range(0, len(bias_str_a), 1):
         weight[i][0] = weight_int[i]
 
+def assem_bias(bias_path):
+    bias_str = []
+
+    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+
+    with open(bias_path, "w", encoding = "utf-8") as f:
+        for i in range(0, len(bias_str), 1):
+            f.write(bias_str[i])
+            f.write("\n")
+
 
 
 # ======== 進行 FC 計算 ========
@@ -281,6 +294,8 @@ def FC(stride, show_detail):
     print("====================")
     print("[系統]: 輸入 FMap 檔案，FC不用轉置")
     #transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    # 讀取 bias 0 - 3 組合成新檔案
+    assem_bias("bias_storage.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0
@@ -327,9 +342,12 @@ def FC(stride, show_detail):
     # ======== 進行 FC 計算 ========
     print("\n\n====================")
     output = Calculation(stride, show_detail, weight, tile0, tile_w)
+    output.append([0.0])
+    output.append([0.0])
+
     if(show_detail):
         print("[系統]: 以下為最終計算結果")
-
+    
     # 進位轉換
     hex_output = []
     for i in range(0, len(output), 1):
@@ -352,9 +370,8 @@ def FC(stride, show_detail):
     
     transpose_txt("output_need_transpose.txt", "output.txt")
 
-
     print("\n[完成]: FC 運算完成")
     
 
 if __name__ == "__main__":
-    FC(stride = 1, show_detail = False)
+    FC(stride = 1, show_detail = True)

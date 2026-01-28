@@ -260,6 +260,23 @@ def read_bias(bias_path, weight):
     for i in range(0, len(bias_str_a), 1):
         weight[i][0] = weight_int[i]
 
+def assem_bias(bias_path):
+    bias_str = []
+
+    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage2.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage3.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+
+    with open(bias_path, "w", encoding = "utf-8") as f:
+        for i in range(0, len(bias_str), 1):
+            f.write(bias_str[i])
+            f.write("\n")
+
 
 # ======== 進行 ConvLast 計算 ========
 def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w = 0):
@@ -296,6 +313,8 @@ def ConvLast(stride, show_detail):
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
     transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    # 讀取 bias 0 - 3 組合成新檔案
+    assem_bias("bias_storage.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0
