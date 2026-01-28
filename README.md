@@ -1,4 +1,4 @@
 # PL_Sim_Core
 模擬硬體運算行為
 
-TODO：ConvLast
+TODO：Conv1 MaxPool GlbAvgPool
