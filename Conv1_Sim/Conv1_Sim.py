@@ -34,7 +34,7 @@ def transpose_txt(input_file, output_file):
 #transpose_txt('tile_buffer3.txt', 'tile_buffer3.txt')
 
 
-
+'''
 # ======== Hex to Dec ======== (Q16.0)
 def HexToDec(hex_input):
     dec_output = []
@@ -55,9 +55,9 @@ def DecToHex(dec_input):
         hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
 
     return hex_output
-
-
 '''
+
+
 # ======== Hex to Dec ======== (Q8.8)
 def HexToDec(hex_input):
     scale_factor = 256.0
@@ -102,7 +102,7 @@ def DecToHex(dec_input):
         hex_output.append(f"{int_val & 0xFFFF:04X}")
 
     return hex_output
-'''
+
 
 
 # ======== 讀取檔案 -- 確認通道數用 ========
@@ -210,6 +210,8 @@ def read_weight(weight_path, weight):
     for i in range(0, len(weight_str_a)+1, 1):
         if(i == 0):
             weight_str_b.append('0')
+        elif(i%4 == 0):
+            continue
         else:
             weight_str_b.append(weight_str_a[i-1])
 
@@ -270,12 +272,14 @@ def assem_bias(bias_path):
 
 
 
-# ======== 進行 DW 計算 ========
+# ======== 進行 Conv1 計算 ========
 def Calculation(stride = 2, show_detail = True, weight = [], tile0 = [], tile1 = [], tile2 = [], tile_w = 0):
-    
 
     if(stride < 1 or stride > 2 or weight == [] or tile0 == [] or tile1 == [] or tile2 == [] or tile_w == 0):
-        print("[錯誤]: 函式 DW_Calc 的參數輸入錯誤，這很有問題")
+        print("[錯誤]: 函式 Conv1_Calc 的參數輸入錯誤，這很有問題")
+        return ["錯爛"]
+    elif(stride == 1):
+        print("[錯誤]: Conv1 的 stride 是 2，不是 1")
         return ["錯爛"]
     
     if(stride == 2):
@@ -289,134 +293,119 @@ def Calculation(stride = 2, show_detail = True, weight = [], tile0 = [], tile1 =
         '''
         if(show_detail):
             print("[系統]: 以下為計算細節輸出，供檢查運算過程")
-        conv331 = 0
+        conv333 = 0
+        pre = 0
         output = []
         for i in range(len(weight)):
             # 初始化暫存
             output_inn = []
 
-            for j in range(0, tile_w-stride+2, stride):
-                conv331 = weight[i][0]
+            for j in range(0, tile_w, stride):
+                pre = 0
+                conv333 = weight[i][0]
                 if(show_detail):
-                    print("bias: ", conv331)
+                    print("bias: ", conv333)
                 # ======== padding左 ========
-                if(j==0):#padding左
-                    conv331 = weight[i][1]*0 + weight[i][4]*0 + weight[i][7]*0 + conv331
+                if (j == 0):
+                    # --- Tile 0 (With Padding 0) ---
+                    pre = conv333
+                    conv333 = weight[i][1]*0 + weight[i][2]*0 + weight[i][3]*0 + conv333
                     if(show_detail):
-                        print(f"{conv331:>20} = {weight[i][1]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{weight[i][4]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{weight[i][7]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{conv331}(bias)")
+                        print(f"{conv333:>20} = {weight[i][1]:>15}(W{i}) * {0:>15}( padd)+ {weight[i][2]:>15}(W{i}) * {0:>15}( padd)+ {weight[i][3]:>15}(W{i}) * {0:>15}( padd)+ {pre}(bias)")
                     
-                    for k in range(1, 3, 1):
-                        conv331 = weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1] + conv331
-                        if(show_detail):
-                            print(f"{conv331:>20} = {weight[i][k+1]:>15}(W{i}) * {tile0[i][j+k-1]:>15}(T1)  +  "
-                                f"{weight[i][k+3+1]:>15}(W{i}) * {tile1[i][j+k-1]:>15}(T2)  +  "
-                                f"{weight[i][k+6+1]:>15}(W{i}) * {tile2[i][j+k-1]:>15}(T3)  +  "
-                                f"{conv331 - (weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1])}(prev)")
+                    pre = conv333
+                    conv333 = weight[i][4]*tile0[0][0+j] + weight[i][5]*tile0[1][0+j] + weight[i][6]*tile0[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][4]:>15}(W{i}) * {tile0[0][0+j]:>15}(tile0)+ {weight[i][5]:>15}(W{i}) * {tile0[1][0+j]:>15}(tile0)+ {weight[i][6]:>15}(W{i}) * {tile0[2][0+j]:>15}(tile0)+ {pre}(acc)")
+                    
+                    pre = conv333
+                    conv333 = weight[i][7]*tile0[0][1+j] + weight[i][8]*tile0[1][1+j] + weight[i][9]*tile0[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][7]:>15}(W{i}) * {tile0[0][1+j]:>15}(tile0)+ {weight[i][8]:>15}(W{i}) * {tile0[1][1+j]:>15}(tile0)+ {weight[i][9]:>15}(W{i}) * {tile0[2][1+j]:>15}(tile0)+ {pre}(acc)")
 
-                # ======== 無padding ========        
+                    # --- Tile 1 (With Padding 0) ---
+                    pre = conv333
+                    conv333 = weight[i][10]*0 + weight[i][11]*0 + weight[i][12]*0 + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][10]:>15}(W{i}) * {0:>15}( padd)+ {weight[i][11]:>15}(W{i}) * {0:>15}( padd)+ {weight[i][12]:>15}(W{i}) * {0:>15}( padd)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][13]*tile1[0][0+j] + weight[i][14]*tile1[1][0+j] + weight[i][15]*tile1[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][13]:>15}(W{i}) * {tile1[0][0+j]:>15}(tile1)+ {weight[i][14]:>15}(W{i}) * {tile1[1][0+j]:>15}(tile1)+ {weight[i][15]:>15}(W{i}) * {tile1[2][0+j]:>15}(tile1)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][16]*tile1[0][1+j] + weight[i][17]*tile1[1][1+j] + weight[i][18]*tile1[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][16]:>15}(W{i}) * {tile1[0][1+j]:>15}(tile1)+ {weight[i][17]:>15}(W{i}) * {tile1[1][1+j]:>15}(tile1)+ {weight[i][18]:>15}(W{i}) * {tile1[2][1+j]:>15}(tile1)+ {pre}(acc)")
+
+                    # --- Tile 2 (With Padding 0) ---
+                    pre = conv333
+                    conv333 = weight[i][19]*0 + weight[i][20]*0 + weight[i][21]*0 + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][19]:>15}(W{i}) * {0:>15}( padd)+ {weight[i][20]:>15}(W{i}) * {0:>15}( padd)+ {weight[i][21]:>15}(W{i}) * {0:>15}( padd)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][22]*tile2[0][0+j] + weight[i][23]*tile2[1][0+j] + weight[i][24]*tile2[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][22]:>15}(W{i}) * {tile2[0][0+j]:>15}(tile2)+ {weight[i][23]:>15}(W{i}) * {tile2[1][0+j]:>15}(tile2)+ {weight[i][24]:>15}(W{i}) * {tile2[2][0+j]:>15}(tile2)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][25]*tile2[0][1+j] + weight[i][26]*tile2[1][1+j] + weight[i][27]*tile2[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][25]:>15}(W{i}) * {tile2[0][1+j]:>15}(tile2)+ {weight[i][26]:>15}(W{i}) * {tile2[1][1+j]:>15}(tile2)+ {weight[i][27]:>15}(W{i}) * {tile2[2][1+j]:>15}(tile2)+ {pre}(acc)")
+
+                # ======== 無padding ======== 
                 else:
-                    for k in range(1, 4, 1):
-                        conv331 = weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2] + conv331
-
-                        if(show_detail):
-                            if(k == 1):
-                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
-                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
-                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
-                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(bias)")
-                            else:
-                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
-                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
-                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
-                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(prev)")
-                output_inn.append(conv331)
-            output.append(output_inn)
-
-    
-    elif(stride == 1):
-        '''
-        stride = 1 的padding 情況: 基本一樣
-
-        0 x x x x x x x x x x x x x x 0
-        0 x x x x x x x x x x x x x x 0
-        0 x x x x x x x x x x x x x x 0
-
-        '''
-        if(show_detail):
-            print("[系統]: 以下為計算細節輸出，供檢查運算過程")
-        conv331 = 0
-        output = []
-        for i in range(len(weight)):
-            # 初始化暫存
-            output_inn = []
-
-            for j in range(0, tile_w-stride+1, stride):
-                conv331 = weight[i][0]
-                if(show_detail):
-                    print("bias: ", conv331)
-                # ======== padding左 ========
-                if(j==0):#padding左
-                    conv331 = weight[i][1]*0 + weight[i][4]*0 + weight[i][7]*0 + conv331
+                    # --- Tile 0 ---
+                    pre = conv333
+                    conv333 = weight[i][1]*tile0[0][-1+j] + weight[i][2]*tile0[1][-1+j] + weight[i][3]*tile0[2][-1+j] + conv333
                     if(show_detail):
-                        print(f"{conv331:>20} = {weight[i][1]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{weight[i][4]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{weight[i][7]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{conv331}(bias)")
-                    
-                    for k in range(1, 3, 1):
-                        conv331 = weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1] + conv331
-                        if(show_detail):
-                            print(f"{conv331:>20} = {weight[i][k+1]:>15}(W{i}) * {tile0[i][j+k-1]:>15}(T1)  +  "
-                                f"{weight[i][k+3+1]:>15}(W{i}) * {tile1[i][j+k-1]:>15}(T2)  +  "
-                                f"{weight[i][k+6+1]:>15}(W{i}) * {tile2[i][j+k-1]:>15}(T3)  +  "
-                                f"{conv331 - (weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1])}(prev)")
-                            
+                        print(f"{conv333:>20} = {weight[i][1]:>15}(W{i}) * {tile0[0][-1+j]:>15}(tile0)+ {weight[i][2]:>15}(W{i}) * {tile0[1][-1+j]:>15}(tile0)+ {weight[i][3]:>15}(W{i}) * {tile0[2][-1+j]:>15}(tile0)+ {pre}(bias)")
 
-                # ======== padding右 ========
-                elif(j == tile_w-stride):
-                    for k in range(1, 3, 1):
-                        conv331 = weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2] + conv331
-                        if(show_detail):
-                            if(k == 1):
-                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
-                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
-                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
-                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(bias)")
-                            else:
-                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
-                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
-                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
-                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(prev)")
-                    
-                    conv331 = weight[i][3]*0 + weight[i][6]*0 + weight[i][9]*0 + conv331
+                    pre = conv333
+                    conv333 = weight[i][4]*tile0[0][0+j] + weight[i][5]*tile0[1][0+j] + weight[i][6]*tile0[2][0+j] + conv333
                     if(show_detail):
-                        print(f"{conv331:>20} = {weight[i][3]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{weight[i][6]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{weight[i][9]:>15}(W{i}) * {0:>15}(padd)+  "
-                            f"{conv331}(prev)")
+                        print(f"{conv333:>20} = {weight[i][4]:>15}(W{i}) * {tile0[0][0+j]:>15}(tile0)+ {weight[i][5]:>15}(W{i}) * {tile0[1][0+j]:>15}(tile0)+ {weight[i][6]:>15}(W{i}) * {tile0[2][0+j]:>15}(tile0)+ {pre}(acc)")
 
+                    pre = conv333
+                    conv333 = weight[i][7]*tile0[0][1+j] + weight[i][8]*tile0[1][1+j] + weight[i][9]*tile0[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][7]:>15}(W{i}) * {tile0[0][1+j]:>15}(tile0)+ {weight[i][8]:>15}(W{i}) * {tile0[1][1+j]:>15}(tile0)+ {weight[i][9]:>15}(W{i}) * {tile0[2][1+j]:>15}(tile0)+ {pre}(acc)")
 
-                # ======== 無padding ========
-                else:
-                    for k in range(1, 4, 1):
-                        conv331 = weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2] + conv331
-                        if(show_detail):
-                            if(k == 1):
-                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
-                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
-                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
-                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(bias)")
-                            else:
-                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
-                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
-                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
-                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(prev)")
-                output_inn.append(conv331)
+                    # --- Tile 1 ---
+                    pre = conv333
+                    conv333 = weight[i][10]*tile1[0][-1+j] + weight[i][11]*tile1[1][-1+j] + weight[i][12]*tile1[2][-1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][10]:>15}(W{i}) * {tile1[0][-1+j]:>15}(tile1)+ {weight[i][11]:>15}(W{i}) * {tile1[1][-1+j]:>15}(tile1)+ {weight[i][12]:>15}(W{i}) * {tile1[2][-1+j]:>15}(tile1)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][13]*tile1[0][0+j] + weight[i][14]*tile1[1][0+j] + weight[i][15]*tile1[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][13]:>15}(W{i}) * {tile1[0][0+j]:>15}(tile1)+ {weight[i][14]:>15}(W{i}) * {tile1[1][0+j]:>15}(tile1)+ {weight[i][15]:>15}(W{i}) * {tile1[2][0+j]:>15}(tile1)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][16]*tile1[0][1+j] + weight[i][17]*tile1[1][1+j] + weight[i][18]*tile1[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][16]:>15}(W{i}) * {tile1[0][1+j]:>15}(tile1)+ {weight[i][17]:>15}(W{i}) * {tile1[1][1+j]:>15}(tile1)+ {weight[i][18]:>15}(W{i}) * {tile1[2][1+j]:>15}(tile1)+ {pre}(acc)")
+
+                    # --- Tile 2 ---
+                    pre = conv333
+                    conv333 = weight[i][19]*tile2[0][-1+j] + weight[i][20]*tile2[1][-1+j] + weight[i][21]*tile2[2][-1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][19]:>15}(W{i}) * {tile2[0][-1+j]:>15}(tile2)+ {weight[i][20]:>15}(W{i}) * {tile2[1][-1+j]:>15}(tile2)+ {weight[i][21]:>15}(W{i}) * {tile2[2][-1+j]:>15}(tile2)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][22]*tile2[0][0+j] + weight[i][23]*tile2[1][0+j] + weight[i][24]*tile2[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][22]:>15}(W{i}) * {tile2[0][0+j]:>15}(tile2)+ {weight[i][23]:>15}(W{i}) * {tile2[1][0+j]:>15}(tile2)+ {weight[i][24]:>15}(W{i}) * {tile2[2][0+j]:>15}(tile2)+ {pre}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][25]*tile2[0][1+j] + weight[i][26]*tile2[1][1+j] + weight[i][27]*tile2[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{conv333:>20} = {weight[i][25]:>15}(W{i}) * {tile2[0][1+j]:>15}(tile2)+ {weight[i][26]:>15}(W{i}) * {tile2[1][1+j]:>15}(tile2)+ {weight[i][27]:>15}(W{i}) * {tile2[2][1+j]:>15}(tile2)+ {pre}(acc)")
+                output_inn.append(conv333)
             output.append(output_inn)
-
 
     else:
         print("[錯誤]: 防呆都有寫你還可以進到這裡來，你本人就是 Bug 吧......")
@@ -441,7 +430,7 @@ with open('output.txt', 'w', encoding='utf-8') as f:
 print("\n[完成]: DW 運算完成")
 '''
 
-def DW(stride, show_detail):
+def Conv1(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
@@ -512,7 +501,7 @@ def DW(stride, show_detail):
         print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}\n")
         print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
         print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
-
+    
     # ======== 進行 DW 計算 ========
     print("\n\n====================")
     output = Calculation(stride, show_detail, weight, tile0, tile1, tile2, tile_w)
@@ -541,8 +530,7 @@ def DW(stride, show_detail):
     
     transpose_txt("output_need_transpose.txt", "output.txt")
 
-
-    print("\n[完成]: DW 運算完成")
+    print("\n[完成]: Conv1 運算完成")
 
 if __name__ == "__main__":
-    DW(stride = 2, show_detail = True)
+    Conv1(stride = 2, show_detail = True)

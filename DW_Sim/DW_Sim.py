@@ -210,6 +210,8 @@ def read_weight(weight_path, weight):
     for i in range(0, len(weight_str_a)+1, 1):
         if(i == 0):
             weight_str_b.append('0')
+        elif(i%4 == 0):
+            continue
         else:
             weight_str_b.append(weight_str_a[i-1])
 
