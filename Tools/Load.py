@@ -204,3 +204,21 @@ shutil.copy2(src_path, dst_path)
 src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Conv1_Sim\output.txt' 
 dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_O\Conv1\output.txt'
 shutil.copy2(src_path, dst_path)
+
+
+# ========== MaxPool ==========
+#MaxPool Fmap
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\MaxPool_Sim\tile_buffer1.txt' 
+dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\MaxPool\tile_buffer1.txt'
+shutil.copy2(src_path, dst_path)
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\MaxPool_Sim\tile_buffer2.txt' 
+dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\MaxPool\tile_buffer2.txt'
+shutil.copy2(src_path, dst_path)
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\MaxPool_Sim\tile_buffer3.txt' 
+dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\MaxPool\tile_buffer3.txt'
+shutil.copy2(src_path, dst_path)
+
+#MaxPool Output
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\MaxPool_Sim\output.txt' 
+dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_O\MaxPool\output.txt'
+shutil.copy2(src_path, dst_path)
