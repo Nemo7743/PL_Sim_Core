@@ -215,7 +215,7 @@ for i in range(0, channel_amount, 1):
 
 
 # ======== 進行 GlbAvgPool 計算 ========
-def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile1 = [], tile2 = [], tile3 = [], tile_w = 0):
+def Calculation(stride = 1, show_detail = True, tile0 = [], tile1 = [], tile2 = [], tile3 = [], tile_w = 0):
     conv_PW = 0
     output = []
     if(stride != -1):
@@ -236,7 +236,8 @@ def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile1 =
             avg_calc.append(tile3[i][j])
         output_inn.append(statistics.mean(avg_calc))
         output.append(output_inn)
-        print("mean num:", statistics.mean(avg_calc), "   in:", avg_calc)
+        if(show_detail):
+            print("mean num:", statistics.mean(avg_calc), "   in:", avg_calc)
 
     return output
 
