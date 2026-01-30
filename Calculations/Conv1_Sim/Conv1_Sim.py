@@ -280,13 +280,13 @@ def read_bias(bias_path, weight):
 def assem_bias(bias_path):
     bias_str = []
 
-    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage0.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage1.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage2.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage2.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage3.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage3.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
 
     with open(bias_path, "w", encoding = "utf-8") as f:
@@ -458,9 +458,9 @@ def Conv1(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
-    transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
-    transpose_txt("tile_buffer2.txt", "tile_buffer2_Tr.txt")
-    transpose_txt("tile_buffer3.txt", "tile_buffer3_Tr.txt")
+    transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    transpose_txt("data/tile_buffer2.txt", "tile_buffer2_Tr.txt")
+    transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt")
     # 讀取 bias 0 - 3 組合成新檔案
     assem_bias("bias_storage.txt")
 
@@ -507,13 +507,13 @@ def Conv1(stride, show_detail):
     print("\n\n====================")
 
     print("[系統]: 讀取weight_storage0.txt")
-    read_weight("weight_storage0.txt", weight)
+    read_weight("data/weight_storage0.txt", weight)
     print("[系統]: 讀取weight_storage1.txt")
-    read_weight("weight_storage1.txt", weight)
+    read_weight("data/weight_storage1.txt", weight)
     print("[系統]: 讀取weight_storage2.txt")
-    read_weight("weight_storage2.txt", weight)
+    read_weight("data/weight_storage2.txt", weight)
     print("[系統]: 讀取weight_storage3.txt")
-    read_weight("weight_storage3.txt", weight)
+    read_weight("data/weight_storage3.txt", weight)
     
     # ==== bias ====
     print("[系統]: 讀取bias_storage.txt")
