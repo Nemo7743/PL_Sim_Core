@@ -456,8 +456,9 @@ print("\n[完成]: DW 運算完成")
 
 def Conv1(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
-    print("====================")
-    print("[系統]: 轉置輸入 FMap 檔案")
+    if(show_detail):
+        print("====================")
+        print("[系統]: 轉置輸入 FMap 檔案")
     transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt")
     transpose_txt("data/tile_buffer2.txt", "tile_buffer2_Tr.txt")
     transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt")
@@ -467,8 +468,9 @@ def Conv1(stride, show_detail):
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0
     tile_w = 0
-    print("\n\n====================")
-    print("[系統]: 執行通道數檢查")
+    if(show_detail):
+        print("\n\n====================")
+        print("[系統]: 執行通道數檢查")
     channel_amount, tile_w = channel_check()
 
     # ======== 讀取檔案 -- 運算用 ========
@@ -476,15 +478,13 @@ def Conv1(stride, show_detail):
     tile0 = []
     tile1 = []
     tile2 = []
-    print("\n\n====================")
+    if(show_detail): print("\n\n====================")
 
-    print("[系統]: 讀取tile_buffer1_Tr.txt")
+    if(show_detail): print("[系統]: 讀取tile_buffer1_Tr.txt")
     read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
-
-    print("[系統]: 讀取tile_buffer2_Tr.txt")
+    if(show_detail): print("[系統]: 讀取tile_buffer2_Tr.txt")
     read_tile("tile_buffer2_Tr.txt", tile1, channel_amount, tile_w)
-
-    print("[系統]: 讀取tile_buffer3_Tr.txt")
+    if(show_detail): print("[系統]: 讀取tile_buffer3_Tr.txt")
     read_tile("tile_buffer3_Tr.txt", tile2, channel_amount, tile_w)
 
     if(show_detail):
@@ -504,19 +504,19 @@ def Conv1(stride, show_detail):
     
     # ==== weight ====
     weight = []
-    print("\n\n====================")
+    if(show_detail): print("\n\n====================")
 
-    print("[系統]: 讀取weight_storage0.txt")
+    if(show_detail): print("[系統]: 讀取weight_storage0.txt")
     read_weight("data/weight_storage0.txt", weight)
-    print("[系統]: 讀取weight_storage1.txt")
+    if(show_detail): print("[系統]: 讀取weight_storage1.txt")
     read_weight("data/weight_storage1.txt", weight)
-    print("[系統]: 讀取weight_storage2.txt")
+    if(show_detail): print("[系統]: 讀取weight_storage2.txt")
     read_weight("data/weight_storage2.txt", weight)
-    print("[系統]: 讀取weight_storage3.txt")
+    if(show_detail): print("[系統]: 讀取weight_storage3.txt")
     read_weight("data/weight_storage3.txt", weight)
     
     # ==== bias ====
-    print("[系統]: 讀取bias_storage.txt")
+    if(show_detail): print("[系統]: 讀取bias_storage.txt")
     read_bias("bias_storage.txt", weight)
 
     if(show_detail):
@@ -527,7 +527,7 @@ def Conv1(stride, show_detail):
         print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
     
     # ======== 進行 DW 計算 ========
-    print("\n\n====================")
+    if(show_detail): print("\n\n====================")
     output = Calculation(stride, show_detail, weight, tile0, tile1, tile2, tile_w)
     if(show_detail):
         print("[系統]: 以下為最終計算結果")
@@ -543,7 +543,7 @@ def Conv1(stride, show_detail):
         print("\n")
 
     # ======== 儲存運算結果 ========
-    print("[系統]: 正在儲存計算結果至 output_need_transpose.txt")
+    if(show_detail): print("[系統]: 正在儲存計算結果至 output_need_transpose.txt")
     with open('output_need_transpose.txt', 'w', encoding='utf-8') as f:
         for i in range(len(hex_output)):
             for j in range(len(hex_output[i])):
