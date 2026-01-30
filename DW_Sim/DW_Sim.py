@@ -231,11 +231,9 @@ def read_weight(weight_path, weight):
 
     # 將讀取到的權重做成一個 list
     weight_str_b = []
-    for i in range(0, len(weight_str_a)+1, 1):
+    for i in range(0, len(weight_str_a)+1-3, 1):
         if(i == 0):
             weight_str_b.append('0')
-        elif(i%4 == 0):
-            continue
         else:
             weight_str_b.append(weight_str_a[i-1])
 
@@ -474,7 +472,14 @@ def DW(stride, show_detail):
     transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
     transpose_txt("tile_buffer2.txt", "tile_buffer2_Tr.txt")
     transpose_txt("tile_buffer3.txt", "tile_buffer3_Tr.txt")
+
+    print("[系統]: 轉置 Weight 檔案")
+    transpose_txt("weight_storage0.txt", "weight_storage0_Tr.txt")
+    transpose_txt("weight_storage1.txt", "weight_storage1_Tr.txt")
+    transpose_txt("weight_storage2.txt", "weight_storage2_Tr.txt")
+    transpose_txt("weight_storage3.txt", "weight_storage3_Tr.txt")
     # 讀取 bias 0 - 3 組合成新檔案
+    print("[系統]: 組合 Bias 檔案")
     assem_bias("bias_storage.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
@@ -519,14 +524,14 @@ def DW(stride, show_detail):
     weight = []
     print("\n\n====================")
 
-    print("[系統]: 讀取weight_storage0.txt")
-    read_weight("weight_storage0.txt", weight)
-    print("[系統]: 讀取weight_storage1.txt")
-    read_weight("weight_storage1.txt", weight)
-    print("[系統]: 讀取weight_storage2.txt")
-    read_weight("weight_storage2.txt", weight)
-    print("[系統]: 讀取weight_storage3.txt")
-    read_weight("weight_storage3.txt", weight)
+    print("[系統]: 讀取weight_storage0_Tr.txt")
+    read_weight("weight_storage0_Tr.txt", weight)
+    print("[系統]: 讀取weight_storage1_Tr.txt")
+    read_weight("weight_storage1_Tr.txt", weight)
+    print("[系統]: 讀取weight_storage2_Tr.txt")
+    read_weight("weight_storage2_Tr.txt", weight)
+    print("[系統]: 讀取weight_storage3_Tr.txt")
+    read_weight("weight_storage3_Tr.txt", weight)
     
     # ==== bias ====
     print("[系統]: 讀取bias_storage.txt")
