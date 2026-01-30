@@ -278,13 +278,13 @@ def read_bias(bias_path, weight):
 def assem_bias(bias_path):
     bias_str = []
 
-    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage0.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage1.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage2.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage2.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage3.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage3.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
 
     with open(bias_path, "w", encoding = "utf-8") as f:
@@ -469,15 +469,15 @@ def DW(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
-    transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
-    transpose_txt("tile_buffer2.txt", "tile_buffer2_Tr.txt")
-    transpose_txt("tile_buffer3.txt", "tile_buffer3_Tr.txt")
+    transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    transpose_txt("data/tile_buffer2.txt", "tile_buffer2_Tr.txt")
+    transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt")
 
     print("[系統]: 轉置 Weight 檔案")
-    transpose_txt("weight_storage0.txt", "weight_storage0_Tr.txt")
-    transpose_txt("weight_storage1.txt", "weight_storage1_Tr.txt")
-    transpose_txt("weight_storage2.txt", "weight_storage2_Tr.txt")
-    transpose_txt("weight_storage3.txt", "weight_storage3_Tr.txt")
+    transpose_txt("data/weight_storage0.txt", "weight_storage0_Tr.txt")
+    transpose_txt("data/weight_storage1.txt", "weight_storage1_Tr.txt")
+    transpose_txt("data/weight_storage2.txt", "weight_storage2_Tr.txt")
+    transpose_txt("data/weight_storage3.txt", "weight_storage3_Tr.txt")
     # 讀取 bias 0 - 3 組合成新檔案
     print("[系統]: 組合 Bias 檔案")
     assem_bias("bias_storage.txt")
@@ -570,7 +570,7 @@ def DW(stride, show_detail):
                 else:
                     f.write(str(hex_output[i][j]) + " ")
     
-    transpose_txt("output_need_transpose.txt", "output.txt")
+    transpose_txt("output_need_transpose.txt", "data/output.txt")
 
 
     print("\n[完成]: DW 運算完成")

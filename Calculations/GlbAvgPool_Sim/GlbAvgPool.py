@@ -246,10 +246,10 @@ def GlbAvgPool(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
-    transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
-    transpose_txt("tile_buffer2.txt", "tile_buffer2_Tr.txt")
-    transpose_txt("tile_buffer3.txt", "tile_buffer3_Tr.txt")
-    transpose_txt("tile_buffer4.txt", "tile_buffer4_Tr.txt")
+    transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    transpose_txt("data/tile_buffer2.txt", "tile_buffer2_Tr.txt")
+    transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt")
+    transpose_txt("data/tile_buffer4.txt", "tile_buffer4_Tr.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0
@@ -338,7 +338,7 @@ def GlbAvgPool(stride, show_detail):
                 else:
                     f.write(str(hex_output[i][j]) + " ")
     
-    transpose_txt("output_need_transpose.txt", "output.txt")
+    transpose_txt("output_need_transpose.txt", "data/output.txt")
 
     print("\n[完成]: GlbAvgPool 運算完成")
 

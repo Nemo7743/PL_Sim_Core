@@ -131,19 +131,19 @@ def DecToHex(dec_input):
 
 # ======== 讀取檔案 -- 確認通道數用 ========
 def channel_check():
-    with open("weight_storage0.txt", "r", encoding = "utf-8") as f:
+    with open("data/weight_storage0.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
         weight0_len = len(content)
     
-    with open("weight_storage1.txt", "r", encoding = "utf-8") as f:
+    with open("data/weight_storage1.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
         weight1_len = len(content)
     
-    with open("weight_storage2.txt", "r", encoding = "utf-8") as f:
+    with open("data/weight_storage2.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
         weight2_len = len(content)
 
-    with open("weight_storage3.txt", "r", encoding = "utf-8") as f:
+    with open("data/weight_storage3.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
         weight3_len = len(content)
     
@@ -193,13 +193,13 @@ def read_tile(tile_path, tile, channel_amount, tile_w):
 def assem_bias(bias_path):
     bias_str = []
 
-    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage0.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage1.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage2.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage2.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage3.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage3.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
 
     with open(bias_path, "w", encoding = "utf-8") as f:
@@ -329,7 +329,7 @@ def PW(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
-    transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt")
     # 讀取 bias 0 - 3 組合成新檔案
     assem_bias("bias_storage.txt")
 
@@ -362,13 +362,13 @@ def PW(stride, show_detail):
     print("\n\n====================")
 
     print("[系統]: 讀取weight_storage0.txt")
-    read_weight("weight_storage0.txt", weight)
+    read_weight("data/weight_storage0.txt", weight)
     print("[系統]: 讀取weight_storage1.txt")
-    read_weight("weight_storage1.txt", weight)
+    read_weight("data/weight_storage1.txt", weight)
     print("[系統]: 讀取weight_storage2.txt")
-    read_weight("weight_storage2.txt", weight)
+    read_weight("data/weight_storage2.txt", weight)
     print("[系統]: 讀取weight_storage3.txt")
-    read_weight("weight_storage3.txt", weight)
+    read_weight("data/weight_storage3.txt", weight)
 
     # ==== bias ====
     print("[系統]: 讀取bias_storage.txt")
@@ -408,7 +408,7 @@ def PW(stride, show_detail):
                 else:
                     f.write(str(hex_output[i][j]) + " ")
     
-    transpose_txt("output_need_transpose.txt", "output.txt")
+    transpose_txt("output_need_transpose.txt", "data/output.txt")
 
 
     print("\n[完成]: PW 運算完成")

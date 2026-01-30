@@ -133,15 +133,15 @@ def DecToHex(dec_input):
 
 # ======== 讀取檔案 -- 確認通道數用 ========
 def channel_check():
-    with open("weight_storage0.txt", "r", encoding = "utf-8") as f:
+    with open("data/weight_storage0.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
         weight0_len = len(content)
     
-    with open("weight_storage1.txt", "r", encoding = "utf-8") as f:
+    with open("data/weight_storage1.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
         weight1_len = len(content)
     
-    with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
+    with open("data/tile_buffer1.txt", "r", encoding = "utf-8") as f:
         content = f.read().split()
         channel_tile0_amount = len(content)
 
@@ -271,9 +271,9 @@ def read_bias(bias_path, weight):
 def assem_bias(bias_path):
     bias_str = []
 
-    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage0.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
-    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+    with open("data/bias_storage1.txt", "r", encoding = "utf-8") as f:
         bias_str.append(f.read())
 
     with open(bias_path, "w", encoding = "utf-8") as f:
@@ -333,7 +333,7 @@ def FC(stride, show_detail):
     tile0 = []
     print("\n\n====================")
     print("[系統]: 讀取tile_buffer1.txt")
-    read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
+    read_tile("data/tile_buffer1.txt", tile0, channel_amount, tile_w)
 
     if(show_detail):
         print("[系統]: 以下為各 tile_buffer，供檢查")
@@ -350,9 +350,9 @@ def FC(stride, show_detail):
     print("\n\n====================")
 
     print("[系統]: 讀取weight_storage0.txt")
-    read_weight("weight_storage0.txt", weight)
+    read_weight("data/weight_storage0.txt", weight)
     print("[系統]: 讀取weight_storage1.txt")
-    read_weight("weight_storage1.txt", weight)
+    read_weight("data/weight_storage1.txt", weight)
 
     # ==== bias ====
     print("[系統]: 讀取bias_storage.txt")
@@ -392,7 +392,7 @@ def FC(stride, show_detail):
                 else:
                     f.write(str(hex_output[i][j]) + " ")
     
-    transpose_txt("output_need_transpose.txt", "output.txt")
+    transpose_txt("output_need_transpose.txt", "data/output.txt")
 
     print("\n[完成]: FC 運算完成")
     
