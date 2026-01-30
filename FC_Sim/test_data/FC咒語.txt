@@ -1,0 +1,934 @@
+以下是我的FC運算測試資料，幫我生成相同格式的測試資料我想要確認我的運算是正確的，其中，weight和tile使用的都是Q8.8，bias使用的都是Q16.16：
+
+bias_storage0.txt：
+ffffc302
+
+bias_storage1.txt：
+00001033
+
+tile_buffer1.txt：(共 1024 個數字)
+0000 0001 0002 0003 0004 0005 0006 0007 0008 0009 000a 000b 000c 000d 000e 000f 0010 0011 0012 0013 0014 0015 0016 0017 0018 0019 001a 001b 001c 001d 001e 001f 0020 0021 0022 0023 0024 0025 0026 0027 0028 0029 002a 002b 002c 002d 002e 002f 0030 0031 0032 0033 0034 0035 0036 0037 0038 0039 003a 003b 003c 003d 003e 003f 0040 0041 0042 0043 0044 0045 0046 0047 0048 0049 004a 004b 004c 004d 004e 004f 0050 0051 0052 0053 0054 0055 0056 0057 0058 0059 005a 005b 005c 005d 005e 005f 0060 0061 0062 0063 0064 0065 0066 0067 0068 0069 006a 006b 006c 006d 006e 006f 0070 0071 0072 0073 0074 0075 0076 0077 0078 0079 007a 007b 007c 007d 007e 007f 0080 0081 0082 0083 0084 0085 0086 0087 0088 0089 008a 008b 008c 008d 008e 008f 0090 0091 0092 0093 0094 0095 0096 0097 0098 0099 009a 009b 009c 009d 009e 009f 00a0 00a1 00a2 00a3 00a4 00a5 00a6 00a7 00a8 00a9 00aa 00ab 00ac 00ad 00ae 00af 00b0 00b1 00b2 00b3 00b4 00b5 00b6 00b7 00b8 00b9 00ba 00bb 00bc 00bd 00be 00bf 00c0 00c1 00c2 00c3 00c4 00c5 00c6 00c7 00c8 00c9 00ca 00cb 00cc 00cd 00ce 00cf 00d0 00d1 00d2 00d3 00d4 00d5 00d6 00d7 00d8 00d9 00da 00db 00dc 00dd 00de 00df 00e0 00e1 00e2 00e3 00e4 00e5 00e6 00e7 00e8 00e9 00ea 00eb 00ec 00ed 00ee 00ef 00f0 00f1 00f2 00f3 00f4 00f5 00f6 00f7 00f8 00f9 00fa 00fb 00fc 00fd 00fe 00ff 0100 0101 0102 0103 0104 0105 0106 0107 0108 0109 010a 010b 010c 010d 010e 010f 0110 0111 0112 0113 0114 0115 0116 0117 0118 0119 011a 011b 011c 011d 011e 011f 0120 0121 0122 0123 0124 0125 0126 0127 0128 0129 012a 012b 012c 012d 012e 012f 0130 0131 0132 0133 0134 0135 0136 0137 0138 0139 013a 013b 013c 013d 013e 013f 0140 0141 0142 0143 0144 0145 0146 0147 0148 0149 014a 014b 014c 014d 014e 014f 0150 0151 0152 0153 0154 0155 0156 0157 0158 0159 015a 015b 015c 015d 015e 015f 0160 0161 0162 0163 0164 0165 0166 0167 0168 0169 016a 016b 016c 016d 016e 016f 0170 0171 0172 0173 0174 0175 0176 0177 0178 0179 017a 017b 017c 017d 017e 017f 0180 0181 0182 0183 0184 0185 0186 0187 0188 0189 018a 018b 018c 018d 018e 018f 0190 0191 0192 0193 0194 0195 0196 0197 0198 0199 019a 019b 019c 019d 019e 019f 01a0 01a1 01a2 01a3 01a4 01a5 01a6 01a7 01a8 01a9 01aa 01ab 01ac 01ad 01ae 01af 01b0 01b1 01b2 01b3 01b4 01b5 01b6 01b7 01b8 01b9 01ba 01bb 01bc 01bd 01be 01bf 01c0 01c1 01c2 01c3 01c4 01c5 01c6 01c7 01c8 01c9 01ca 01cb 01cc 01cd 01ce 01cf 01d0 01d1 01d2 01d3 01d4 01d5 01d6 01d7 01d8 01d9 01da 01db 01dc 01dd 01de 01df 01e0 01e1 01e2 01e3 01e4 01e5 01e6 01e7 01e8 01e9 01ea 01eb 01ec 01ed 01ee 01ef 01f0 01f1 01f2 01f3 01f4 01f5 01f6 01f7 01f8 01f9 01fa 01fb 01fc 01fd 01fe 01ff 0200 0201 0202 0203 0204 0205 0206 0207 0208 0209 020a 020b 020c 020d 020e 020f 0210 0211 0212 0213 0214 0215 0216 0217 0218 0219 021a 021b 021c 021d 021e 021f 0220 0221 0222 0223 0224 0225 0226 0227 0228 0229 022a 022b 022c 022d 022e 022f 0230 0231 0232 0233 0234 0235 0236 0237 0238 0239 023a 023b 023c 023d 023e 023f 0240 0241 0242 0243 0244 0245 0246 0247 0248 0249 024a 024b 024c 024d 024e 024f 0250 0251 0252 0253 0254 0255 0256 0257 0258 0259 025a 025b 025c 025d 025e 025f 0260 0261 0262 0263 0264 0265 0266 0267 0268 0269 026a 026b 026c 026d 026e 026f 0270 0271 0272 0273 0274 0275 0276 0277 0278 0279 027a 027b 027c 027d 027e 027f 0280 0281 0282 0283 0284 0285 0286 0287 0288 0289 028a 028b 028c 028d 028e 028f 0290 0291 0292 0293 0294 0295 0296 0297 0298 0299 029a 029b 029c 029d 029e 029f 02a0 02a1 02a2 02a3 02a4 02a5 02a6 02a7 02a8 02a9 02aa 02ab 02ac 02ad 02ae 02af 02b0 02b1 02b2 02b3 02b4 02b5 02b6 02b7 02b8 02b9 02ba 02bb 02bc 02bd 02be 02bf 02c0 02c1 02c2 02c3 02c4 02c5 02c6 02c7 02c8 02c9 02ca 02cb 02cc 02cd 02ce 02cf 02d0 02d1 02d2 02d3 02d4 02d5 02d6 02d7 02d8 02d9 02da 02db 02dc 02dd 02de 02df 02e0 02e1 02e2 02e3 02e4 02e5 02e6 02e7 02e8 02e9 02ea 02eb 02ec 02ed 02ee 02ef 02f0 02f1 02f2 02f3 02f4 02f5 02f6 02f7 02f8 02f9 02fa 02fb 02fc 02fd 02fe 02ff 0300 0301 0302 0303 0304 0305 0306 0307 0308 0309 030a 030b 030c 030d 030e 030f 0310 0311 0312 0313 0314 0315 0316 0317 0318 0319 031a 031b 031c 031d 031e 031f 0320 0321 0322 0323 0324 0325 0326 0327 0328 0329 032a 032b 032c 032d 032e 032f 0330 0331 0332 0333 0334 0335 0336 0337 0338 0339 033a 033b 033c 033d 033e 033f 0340 0341 0342 0343 0344 0345 0346 0347 0348 0349 034a 034b 034c 034d 034e 034f 0350 0351 0352 0353 0354 0355 0356 0357 0358 0359 035a 035b 035c 035d 035e 035f 0360 0361 0362 0363 0364 0365 0366 0367 0368 0369 036a 036b 036c 036d 036e 036f 0370 0371 0372 0373 0374 0375 0376 0377 0378 0379 037a 037b 037c 037d 037e 037f 0380 0381 0382 0383 0384 0385 0386 0387 0388 0389 038a 038b 038c 038d 038e 038f 0390 0391 0392 0393 0394 0395 0396 0397 0398 0399 039a 039b 039c 039d 039e 039f 03a0 03a1 03a2 03a3 03a4 03a5 03a6 03a7 03a8 03a9 03aa 03ab 03ac 03ad 03ae 03af 03b0 03b1 03b2 03b3 03b4 03b5 03b6 03b7 03b8 03b9 03ba 03bb 03bc 03bd 03be 03bf 03c0 03c1 03c2 03c3 03c4 03c5 03c6 03c7 03c8 03c9 03ca 03cb 03cc 03cd 03ce 03cf 03d0 03d1 03d2 03d3 03d4 03d5 03d6 03d7 03d8 03d9 03da 03db 03dc 03dd 03de 03df 03e0 03e1 03e2 03e3 03e4 03e5 03e6 03e7 03e8 03e9 03ea 03eb 03ec 03ed 03ee 03ef 03f0 03f1 03f2 03f3 03f4 03f5 03f6 03f7 03f8 03f9 03fa 03fb 03fc 03fd 03fe 03ff
+
+weight_storage0.txt：(共 1024 個數字)
+000f ffe0 ffeb 0007
+0012 0016 0009 ffeb
+ffe1 002a 0018 0015
+ffec ffe2 ffdb ffdc
+000b 001f ffec 0009
+ffe5 0015 000c ffe4
+ffdd 0007 0004 0009
+0025 ffe7 ffee 000e
+0008 ffe2 ffea 001d
+0002 ffea 0020 fffe
+0012 0009 0014 0011
+0018 0011 0025 ffe3
+fffb fff2 ffff 001d
+0023 0029 ffe6 0009
+ffea 0004 fffa 000d
+ffe7 fff1 0000 000c
+001e 001f ffec fffc
+ffef ffe5 0009 ffe3
+fffa fff8 fffb ffd3
+ffdf 001a ffdf 0011
+000d 000e ffd8 000f
+ffeb ffeb fff5 000f
+fffe 0003 fff6 fff6
+fff7 0014 0019 ffe2
+fff3 0001 ffe1 0022
+0020 000d 0003 0009
+0001 fffe 0017 ffec
+ffdc fff0 fff9 fffd
+000b 0003 0021 ffca
+0010 ffe5 ffe9 0008
+ffe7 001a 001d 001d
+ffe9 ffea ffff ffd6
+000c ffd3 fff2 0016
+000f 0025 000a 001d
+fffe 000e 001d ffe9
+0009 001b ffe5 0013
+0012 fffe ffef 0009
+000c fff1 0028 0018
+fffb ffd4 0026 0032
+0004 0015 0024 0024
+000a 0003 000f ffdf
+ffe6 0026 0029 0017
+fff8 ffe7 002e 0022
+ffe4 000d ffea 0002
+0020 0013 ffed 000e
+ffdf 000a ffe4 ffe7
+002e 001e 0001 fffc
+0027 0000 0007 0002
+ffdc ffe4 ffee fff1
+000c 001f 001c ffe7
+ffe9 ffe1 001c 0009
+ffe6 ffed 0001 ffe5
+000b ffe3 fff1 ffee
+fff6 0011 ffe6 001f
+fffa 001d ffcb ffed
+0018 0025 0018 000a
+001f fffd 0022 001b
+0007 0013 0008 ffe9
+000f 000a 0006 001b
+0008 0004 0005 0015
+0009 ffd2 002c 0026
+ffed ffff ffff fff9
+ffdc fff5 0013 0009
+ffea fffc 0021 001b
+0003 ffdf 001d 002e
+fff8 001b 0011 001b
+0015 ffe1 000b 0016
+000a 0019 001b ffd1
+0005 fff1 0011 fff6
+002d 0016 ffe1 000f
+0021 002c ffe6 0006
+0021 ffe1 fff7 ffe1
+0006 ffd4 fffa ffee
+000d 0016 fff3 fffb
+0015 ffe0 0005 0013
+ffda ffe1 fff0 ffdd
+0017 ffed 0010 fffe
+000f fff9 001a ffff
+001b ffe1 0004 ffe2
+ffe0 0010 ffe6 0018
+0023 000c fffb ffe2
+001d 0010 0014 0016
+ffd0 ffff ffe0 ffde
+ffe7 fffc 000e fff2
+ffe5 0009 ffd7 ffea
+001d 0011 ffdc fff9
+0016 0003 ffdd 000f
+fffd ffde 000d 0010
+0024 0017 0024 002e
+0006 ffe9 fff5 ffe7
+0019 fff3 ffd9 0023
+0000 ffff 0008 ffee
+ffdc fff2 fff3 fff1
+002f ffff 002c 0013
+ffe6 ffe1 0024 0029
+000d ffd2 fff9 001a
+ffe0 ffe7 0019 ffca
+fff9 0027 fff6 ffe3
+ffea ffff fff1 0015
+ffdc 001a 0027 ffe6
+0016 000e fff8 001a
+001e 0024 0012 ffdf
+0024 0003 ffed ffe6
+0013 002b 0013 ffda
+ffef ffee 002d 000d
+0015 ffe6 0008 ffe5
+0019 0016 ffdd ffe9
+0001 ffd4 fff7 ffea
+fffa 000d 002a ffdd
+fffc 0009 ffec 0010
+ffef ffdf fff7 ffe2
+ffe8 0019 0021 ffe7
+fffc 0021 001e 0008
+002c 0001 ffea 001f
+0004 0005 0014 0003
+0018 0011 0023 0019
+0018 ffdd 0026 0026
+001c ffdb fffb fff6
+0025 fff8 ffdf fff0
+0000 ffda 0004 0008
+001c ffdc 002e 0001
+0012 0007 0009 ffe4
+0010 ffe0 001d 001c
+001a 0017 000b 0001
+0022 0022 001d fffa
+ffdb ffe5 002a ffe2
+001e fffd 000a ffd1
+fffd fff9 ffec 0013
+fffb 000f 0028 ffe2
+fff6 ffeb 0025 0029
+0018 ffef fffe 0011
+ffea 0021 ffd0 0009
+0019 fff5 0020 fff7
+0017 002a 000f ffd9
+0020 ffea ffdb ffea
+ffd2 0003 0015 0023
+ffe7 0014 0025 ffda
+0020 002c 0009 ffcf
+ffd4 fffd fff5 ffd3
+0013 0014 0036 0008
+0009 ffe0 ffff 000b
+ffe9 0007 ffec fff9
+ffe9 0005 0016 000c
+ffeb ffea fff7 0014
+ffda fff9 0028 ffeb
+0024 fff3 0020 0020
+0020 ffe2 001b 0004
+fff6 002c fff1 ffd9
+fff5 ffd8 0020 000e
+000b 0021 fff0 0020
+0015 ffe8 0003 ffe8
+fff9 0009 0010 001c
+fff6 0012 0004 ffeb
+fff6 001c fffa ffec
+ffe5 0024 fff8 fffc
+fffb fffe 002e 0026
+ffff ffd3 0025 0016
+ffe0 001b ffe4 0007
+0009 0016 fff8 0000
+ffe3 ffe6 0019 0005
+0008 fffc ffc6 fff6
+001a 001c 0027 ffe0
+fff6 0034 0017 fff2
+ffe7 ffe1 ffe4 ffe4
+0000 ffeb 0015 0018
+0006 fffd 0027 0016
+fff4 0008 0009 0006
+000a ffe7 0013 ffda
+fff6 0023 ffef 0031
+ffd6 000a 0028 0026
+0020 0000 0003 ffe1
+0014 000d 0005 ffe7
+fff6 ffef 0028 001e
+ffd9 fff2 ffde ffee
+0020 0008 fff8 fff1
+fff3 001b 0013 ffd1
+001f 0028 ffe1 0000
+0000 0001 ffe7 ffed
+0007 0004 0004 fffe
+ffe3 0024 ffdc 001d
+0012 fffe ffd3 002c
+000f ffee ffe2 0001
+ffea ffdb 002f 0023
+ffdd 001a fff4 0020
+0024 0003 0006 001c
+001e 0030 ffe0 ffec
+0004 ffd6 0023 0027
+000f ffec 001a 0018
+fff3 ffdd 001a 0007
+ffe6 001c fff8 ffef
+fff6 ffe4 ffec 0018
+fffc ffff ffea fff2
+ffcf fff3 fffe fff7
+0019 ffee 000b 0021
+ffff 0001 fff2 0033
+fff5 0015 fff3 fffa
+0003 0002 0024 0025
+0016 ffe8 0000 0018
+0030 ffd5 ffea fff4
+001a ffe8 ffef 0019
+ffe6 ffde 0029 0007
+fff6 fff1 ffec ffe9
+000b ffd8 ffe3 000a
+0014 ffeb 0004 fffb
+0021 002b fff0 000e
+ffe8 ffe8 0026 ffe9
+001e 0023 0001 ffeb
+ffdf 001b ffe3 fff3
+fffc ffe6 0016 ffed
+002a fff0 fffe ffff
+002c fff2 ffe6 fffc
+ffe6 0017 ffeb 0018
+ffec 001f 0003 ffee
+0029 fff9 0025 fff4
+0018 000a fff8 fff2
+ffe7 fff4 ffcf ffe3
+fff3 0023 001f 002c
+000c fffa ffec 001a
+001b fff3 ffe7 fff3
+0022 fffa fffe 001c
+000e 0007 ffe5 ffec
+0026 ffd8 ffe7 0004
+002e 0002 fffb 0008
+0003 ffe5 0000 002d
+000a ffe3 002b 0010
+fff7 0022 fff4 ffdf
+0026 ffd4 000f fffe
+ffff 0005 001e 0018
+ffd4 ffda ffdf 0006
+001f 001b 0003 000b
+fff9 0001 ffee 0012
+fffe 0015 0014 0011
+000e ffe3 000b 000c
+0023 ffe8 001f 001f
+ffe8 ffee fffe ffef
+ffef ffe8 0027 0023
+000d ffdb 0024 ffef
+0013 ffee 000f 001d
+001b ffee 0002 ffe5
+000f 000c fff8 0007
+ffee fff9 fff0 0006
+000d ffe9 ffe1 ffdc
+0005 ffdf fff1 0017
+0013 001e 000b fffc
+fff2 fff9 000e ffe8
+ffda fff4 ffdd ffeb
+fff4 0024 0033 ffde
+0024 fff2 fffd 0021
+001c fff6 ffea 0017
+0015 0023 ffef 0000
+ffef fff5 ffef fff2
+ffed 000b 0013 0022
+fffe 0001 ffe9 ffe0
+fffa ffd9 0006 0019
+ffda fffb 001a 000f
+fffa 0004 0012 001a
+
+
+weight_storage1.txt：(共 1024 個數字)
+0008 002f ffd9 002b
+0009 ffda ffde 000f
+0014 ffef fffe fffb
+fff0 0016 ffe8 ffec
+ffe8 ffd6 fff5 002b
+0010 0001 0002 fff2
+000a 001b ffe6 ffdf
+ffdf 0024 000b 0021
+ffd8 002a 002f fff3
+fff1 fffe 0025 001b
+000f 000f 0001 ffe7
+ffe6 0020 ffda 0019
+fff9 000f ffe9 0002
+ffdf ffea 0018 002b
+ffea 0005 001b ffe9
+fff0 ffd4 ffe6 001c
+ffe7 ffe7 0014 fffe
+000d 000e 0016 ffeb
+0029 ffe9 0009 fffd
+0008 000b 0028 001d
+0023 0005 000f ffdf
+0024 fffa ffdb fff4
+0016 000d ffe7 0030
+ffdd ffec ffe1 0005
+000d 0011 0002 fff5
+000f 0025 fff1 ffe6
+fff8 0002 ffee 001d
+fffe 0020 001c 0017
+0002 002c fff5 fff6
+0024 ffe2 0020 ffe6
+0022 000c ffda 0008
+0013 0017 000f ffea
+0019 0019 ffd6 ffde
+ffe7 ffdf ffed ffea
+0004 001e ffe6 001d
+ffe5 fff4 000a fffa
+fffa 000d ffe5 0005
+ffdf ffe3 0019 ffe3
+ffd9 fff9 ffe9 0001
+0015 fff3 fff4 0020
+0013 ffd4 ffe3 0007
+0019 ffde ffd5 ffdd
+0001 000e 0000 0015
+ffe2 000b 0018 fff4
+0003 002b 0001 0016
+0013 fff0 0002 fff1
+0003 ffdd 000e 001c
+ffef 0029 fff3 001b
+002c ffec 001a fffe
+ffe2 ffe9 ffe9 ffe2
+0016 000a ffff ffd9
+001b 0014 002e 000d
+ffe7 0003 ffd5 000c
+001e fff1 fff9 0005
+0011 0011 ffed ffd2
+ffdd ffdd ffdf ffea
+ffe4 0022 ffe6 fff8
+0025 001e 0028 ffef
+0025 fffb ffd7 ffe9
+002b fff9 0001 001c
+0007 001a 000d 000d
+fff2 002d 000f 002f
+ffe0 0002 ffd7 ffd3
+0003 ffe2 ffe4 0001
+ffe8 fff3 fffa ffd6
+ffe6 ffeb ffdf 002f
+0010 0029 002e 002e
+0013 001e fffe 0014
+000c fffe fff1 001b
+001a ffdf 001f 0002
+ffeb ffe6 002a 0007
+ffe8 ffdb ffe8 000a
+001f 002d 001a 001b
+0008 ffe7 ffef 0004
+0028 0016 000c fff5
+fffd fff1 0015 0012
+fff3 000d 0020 000a
+ffee 0004 ffdf ffe3
+001b 001f 0026 ffed
+0023 002f ffde 000a
+0008 0007 fff7 0023
+0001 ffff 0005 ffe9
+001d 002a ffff 0011
+ffd4 000a ffe9 0010
+ffe1 fff3 fff8 000f
+ffff ffef ffe7 0009
+fffd ffe0 ffdc 000b
+fff6 ffd6 fff0 fffb
+001f 000d 000b 0012
+0003 000b 0002 0019
+0013 0020 ffe8 ffea
+ffe1 fff3 0006 ffea
+ffeb 0023 fffd 000f
+0012 ffd6 ffe4 000a
+ffd8 ffee ffe0 ffdc
+fff5 ffe0 fff2 fff7
+0023 0022 fff4 0003
+0003 0011 fff6 001a
+0016 fff7 001f ffd7
+fff2 ffe0 0015 0019
+ffef 0010 ffde ffe8
+ffe5 0013 001f 0022
+001c 0025 000f 0019
+000c ffee ffed ffec
+ffd2 0014 0011 ffe9
+0027 ffe8 0009 0014
+ffe5 ffe2 0005 0012
+0010 0011 0024 0010
+0015 fff7 000c 001e
+0000 0017 ffd5 ffdd
+001b fffa ffe6 0016
+ffe8 fffa 0003 0024
+ffd9 0007 0002 fffd
+ffd8 0009 ffde ffef
+ffea 000a ffd9 fff4
+fffd ffdc 0000 001b
+ffee 0018 0022 fff3
+fff7 ffea ffe8 002f
+0016 001d fff9 000c
+ffdf fff1 ffdb ffe1
+0003 001b fff9 000f
+ffed ffdd ffd2 0026
+ffef 0025 000d 0012
+0018 ffe8 001e fff0
+ffe2 ffe6 ffe0 0003
+002c 0015 ffe8 0009
+000f 001e fff1 ffff
+0017 ffe9 001b 0006
+000e ffdf ffe1 ffd9
+ffdb 0004 fff0 ffef
+fff2 ffdc 002c fff8
+0029 ffe2 001b 001c
+002d 001b ffed 0026
+ffe0 ffef fff3 000b
+0005 ffec 002a 0000
+0003 000a ffe2 fffb
+0017 ffdd fff9 0018
+0008 001c ffe8 0006
+ffed 0009 0016 fffb
+ffe7 ffe2 0008 ffda
+ffef 0013 0020 000a
+fffb ffe1 0012 fffb
+0014 fff1 0015 0007
+0002 0028 ffd7 0015
+ffe7 002a ffe6 001b
+fff8 001e fff8 fff4
+ffd9 0018 fff7 ffe1
+fff7 0015 0018 0000
+0018 0034 fff7 ffe2
+ffec 0004 fff0 000b
+fff6 002c ffe7 0009
+fffb 001d 000c ffd8
+0005 ffe0 0011 0000
+000f fff0 000d ffd9
+fff8 ffff fffc ffef
+0015 ffe7 001f 0014
+ffd5 ffeb 0004 002e
+000f 000c 0023 0020
+fff4 fff8 0004 ffeb
+0007 fffb fff9 fffc
+ffdb 000d 0004 0020
+ffdb ffe4 ffe2 000f
+001d ffef ffe5 0002
+000e 0019 0000 0019
+000a fffa 0022 000c
+ffe1 ffdb 001c ffe6
+0026 ffea 0019 fff6
+fff4 fff4 fff9 002b
+0013 ffdd fff1 0009
+fff1 0019 0012 ffdf
+fff6 fff8 001c 0014
+ffe7 0025 ffe6 0020
+ffe8 001d 0002 000a
+0016 0006 0014 000a
+ffe9 0026 ffed 0003
+0020 ffd9 fff2 ffe9
+002f ffe8 001d 000a
+ffd7 fff8 0022 0007
+0001 ffe7 ffe6 0014
+0008 ffea 0010 000e
+001e ffdd 0005 000b
+ffea ffe3 0019 0020
+0004 001e ffe9 ffed
+0003 ffd7 002d 000b
+0008 ffe2 ffe6 001d
+ffe0 000a 0027 ffe5
+fff9 fffe fff8 ffe9
+ffe3 001b fffb ffdf
+ffde 000f fff7 0013
+000f ffe0 001c fff8
+fffd fffd 000a 0023
+0016 0026 0017 0013
+000b 001b 0028 0012
+0000 0015 0002 ffdc
+ffd4 0027 ffdf 0009
+ffed fffa ffed 001a
+0008 0029 ffdc 0000
+0020 fff3 0026 ffe9
+000f 0014 ffed ffe2
+0013 fffc 001f 0027
+0002 000d ffe5 001e
+0007 fffa ffe1 fffc
+001a 0000 000c ffdf
+ffe1 fffe 0023 ffe8
+fffd fff4 0022 ffd7
+ffef fffd ffdc ffe7
+0021 001a 000f fff6
+0015 ffdb 0005 ffea
+ffd2 ffeb 001b ffef
+fff7 0020 0015 000f
+fff5 ffff 000b 002d
+fff2 ffff 0022 ffdd
+002c fffa 001c fff8
+fff1 001f ffe3 fffd
+fff3 0024 0017 0002
+ffef fffe fff3 fffb
+000f fffa ffe8 0004
+ffec 0020 0013 ffdb
+fffb 001a fff2 0002
+ffd7 0012 0014 fff9
+0012 fff5 0013 ffe7
+0019 000c fffc 0029
+fff0 001a 0011 ffcb
+0012 ffee ffd5 0014
+ffdb fff9 ffec 0009
+0006 fff9 0025 0025
+ffda 0013 fff0 002a
+ffe0 002a ffeb 0004
+fff2 0002 000f 0022
+fff3 0012 ffe5 ffe0
+0019 fff0 0009 ffee
+ffe1 fffa 0021 000d
+ffe4 ffe1 0000 fff5
+ffe6 0002 0023 fff3
+0020 ffe5 ffde 000e
+0003 ffeb 0017 0018
+fffb 001f fff0 0016
+ffea fff1 fff7 0014
+fffd ffed 0000 000d
+0005 ffe2 ffe8 fff5
+ffe9 0002 0010 001c
+fff5 001f 001d 001a
+ffeb 0001 ffd8 fffc
+ffe3 fff9 ffdc 0006
+000d ffe6 0019 002e
+000f ffd3 fff6 0006
+0022 fffe 0008 001d
+fffe 002f fff6 0005
+0020 fff5 fff4 fffd
+0016 fff3 0026 ffe1
+0012 fff3 ffeb 0007
+fffc ffde 0003 ffea
+0001 fffd 0009 0018
+0004 0006 0029 0002
+001f 000d fff8 0012
+001c 002c ffec ffec
+
+
+
+
+
+程式碼：
+# ======== 小工具 ========
+# 轉置txt
+def transpose_txt(input_file, output_file):
+    try:
+        # 1. 讀取檔案
+        with open(input_file, 'r', encoding='utf-8') as f:
+            # 讀取每一行，去除前後空白，並依據空格切割成 list
+            # 使用 if line.strip() 是為了避免讀取到空行
+            matrix = [line.strip().split() for line in f if line.strip()]
+
+        # 檢查是否有資料
+        if not matrix:
+            print("檔案是空的。")
+            return
+
+        # 2. 轉置資料
+        # zip(*matrix) 會將原本的 Row 拆開並重新組合成 Column
+        transposed_matrix = list(zip(*matrix))
+
+        # 3. 寫入新檔案
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for row in transposed_matrix:
+                # 將 tuple 轉回字串，並用空格連接
+                f.write(" ".join(row) + "\n")
+        
+        print(f"[系統]: {input_file} 轉置完成！已儲存至 {output_file}")
+
+    except FileNotFoundError:
+        print(f"找不到檔案：{input_file}")
+    except Exception as e:
+        print(f"發生錯誤：{e}")
+
+# 執行轉置
+#transpose_txt('tile_buffer1.txt', 'tile_buffer1.txt')
+
+'''
+# ======== Hex to Dec ======== (Q16.0)
+def HexToDec(hex_input):
+    dec_output = []
+    for i in range(len(hex_input)):
+        raw_val = int(hex_input[i], 16)
+        if raw_val & 0x8000:#判斷第 15 bit (MSB) 是否為 1
+            dec_output.append(raw_val - 0x10000)
+        else:
+            dec_output.append(raw_val)
+
+    return dec_output
+
+
+# ======== Dec to Hec ======== (Q16.0)
+def DecToHex(dec_input):
+    hex_output = []
+    for i in range(len(dec_input)):
+        hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
+
+    return hex_output
+'''
+
+
+
+
+# ======== Hex to Dec ======== (Q8.8)
+def HexToDec(hex_input):
+    scale_factor = 256.0
+    dec_output = []
+    for hex_str in hex_input:
+        # 轉成 Raw Integer (0 ~ 65535)
+        raw_val = int(hex_str, 16)
+
+        # 處理 Sign Bit (二補數轉換)
+        # 如果第 15 bit 是 1 (即 >= 0x8000)，代表是負數
+        if raw_val & 0x8000:
+            signed_val = raw_val - 0x10000
+        else:
+            signed_val = raw_val
+        
+        # 轉成浮點數
+        dec_output.append(signed_val / scale_factor)
+        
+    return dec_output
+
+# ======== Hex to Dec ======== (Q16.16)
+def HexToDec_Q16_16(hex_input):
+    # Q16.16 表示有 16 個小數位
+    # Scale Factor = 2^16 = 65536.0
+    scale_factor = 65536.0
+    
+    dec_output = []
+    for hex_str in hex_input:
+        # 轉成 Raw Integer (32-bit 範圍: 0 ~ 4294967295)
+        raw_val = int(hex_str, 16)
+
+        # 處理 Sign Bit (32-bit 二補數轉換)
+        # Q16.16 是 32-bit 格式，MSB 是第 31 bit (即 >= 0x80000000)
+        if raw_val & 0x80000000:
+            # 若為負數，減去 2^32 (0x100000000)
+            signed_val = raw_val - 0x100000000
+        else:
+            signed_val = raw_val
+        
+        # 轉成浮點數
+        dec_output.append(signed_val / scale_factor)
+        
+    return dec_output
+
+# ======== Dec to Hec ======== (Q8.8)
+def DecToHex(dec_input):
+    hex_output = []
+    scale_factor = 256.0
+    
+    # Q8.8 (Signed 16-bit) 的整數範圍限制
+    MAX_VAL = 32767   # 0x7FFF
+    MIN_VAL = -32768  # 0x8000
+
+    for val in dec_input:
+        # 轉換為固定點數整數 (乘上 2^8 並四捨五入)
+        int_val = int(round(val * scale_factor))
+
+        # 飽和截斷
+        # 若超過表示範圍，強制鎖定在最大或最小值
+        if int_val > MAX_VAL:
+            int_val = MAX_VAL
+        elif int_val < MIN_VAL:
+            int_val = MIN_VAL
+
+        # 轉回 Hex 字串 (處理負數顯示 & 0xFFFF)
+        hex_output.append(f"{int_val & 0xFFFF:04X}")
+
+    return hex_output
+
+
+
+
+# ======== 讀取檔案 -- 確認通道數用 ========
+def channel_check():
+    with open("weight_storage0.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        weight0_len = len(content)
+    
+    with open("weight_storage1.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        weight1_len = len(content)
+    
+    with open("tile_buffer1.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        channel_tile0_amount = len(content)
+
+
+    if(channel_tile0_amount != weight0_len or channel_tile0_amount != weight1_len):
+        print("[錯誤]: 權重和 FMap 的通道數量不匹配，到底為什麼可以犯這種錯 =.=")
+    else:
+        channel_amount = channel_tile0_amount
+        tile_w = len(content)//channel_amount
+        if(tile_w%2 == 0):# W 為偶數，沒問題
+            print("[通過]: 通道檢查通過，無錯誤，夯")
+            return channel_amount, tile_w
+        else:
+            print("[錯誤]: W 不應該為奇數，你個SB")
+            return channel_amount, tile_w
+
+'''
+channel_amount = 0
+tile_w = 0
+print("[系統]: 執行輸入文本檢查")
+channel_amount, tile_w = channel_check()
+'''
+
+
+# ======== 讀取檔案 -- 運算用 ========
+# ==== tile ====
+def read_tile(tile_path, tile, channel_amount, tile_w):
+    with open(tile_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        tile_str = f.read().split()
+
+        # str 轉 int(16進制)
+        tile_int = []
+        tile_int = HexToDec(tile_str)
+        
+        # 將 tile 的 channel 切開並存為 2 維 list
+        for i in range(0, channel_amount, 1):
+            tile.append(tile_int[i*tile_w+0:i*tile_w+tile_w])
+
+'''
+tile0 = []
+tile1 = []
+tile2 = []
+tile3 = []
+print("\n\n====================")
+print("[系統]: 讀取tile_buffer1.txt")
+read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
+print("[系統]: 讀取tile_buffer2.txt")
+read_tile("tile_buffer2.txt", tile1, channel_amount, tile_w)
+print("[系統]: 讀取tile_buffer3.txt")
+read_tile("tile_buffer3.txt", tile2, channel_amount, tile_w)
+print("[系統]: 讀取tile_buffer4.txt")
+read_tile("tile_buffer4.txt", tile3, channel_amount, tile_w)
+
+print("[系統]: 以下為各 tile_buffer，供檢查")
+# 印出 tile0 確認
+print("\ntile_buffer1:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile0[i]), f"tile1_{i}: ", tile0[i])
+# 印出 tile1 確認
+print("\ntile_buffer2:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile1[i]), f"tile2_{i}: ", tile1[i])
+# 印出 tile2 確認
+print("\ntile_buffer3:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
+# 印出 tile3 確認
+print("\ntile_buffer4:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile3[i]), f"tile4_{i}: ", tile3[i])
+'''
+
+# ==== weight ====
+def read_weight(weight_path, weight):
+    with open(weight_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        weight_str_a = f.read().split()
+
+    # 將讀取到的權重做成一個 list
+    weight_str_b = []
+    for i in range(0, len(weight_str_a)+1, 1):
+        if(i == 0):
+            weight_str_b.append('0')
+        else:
+            weight_str_b.append(weight_str_a[i-1])
+
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec(weight_str_b)
+    
+    # 將本次權重插入 list 形成二維陣列
+    weight.append(weight_int)
+'''
+weight = []
+print("\n\n====================")
+print("[系統]: 讀取weight_storage0.txt")
+read_weight("weight_storage0.txt", weight)
+print("[系統]: 讀取weight_storage1.txt")
+read_weight("weight_storage1.txt", weight)
+print("[系統]: 讀取weight_storage2.txt")
+read_weight("weight_storage2.txt", weight)
+print("[系統]: 讀取weight_storage3.txt")
+read_weight("weight_storage3.txt", weight)
+
+print("[系統]: 以下為各 weight_storage，供檢查\n")
+print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}\n")
+print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
+print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
+'''
+
+# ==== bias ====
+def read_bias(bias_path, weight):
+    with open(bias_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        bias_str_a = f.read().split()
+    
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec_Q16_16(bias_str_a)
+
+    # 將 bias 存入陣列的 [0]
+    for i in range(0, len(bias_str_a), 1):
+        weight[i][0] = weight_int[i]
+
+def assem_bias(bias_path):
+    bias_str = []
+
+    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+
+    with open(bias_path, "w", encoding = "utf-8") as f:
+        for i in range(0, len(bias_str), 1):
+            f.write(bias_str[i])
+            f.write("\n")
+
+
+
+# ======== 進行 FC 計算 ========
+def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w = 0):
+    conv_PW = 0
+    output = []
+    if(stride != 1):
+        print("[錯誤]: Stride 在 FC 只能是 1，天才")
+        output.append("Poop")
+        return output
+
+
+    for i in range(0, len(weight), 1):
+        output_inn = []
+        for j in range(0, tile_w, 1):
+            
+            conv_PW = weight[i][0]
+            for k in range(0, len(tile0), 1):
+                conv_PW = weight[i][k+1] * tile0[k][j] + conv_PW
+                if(show_detail):
+                    if(k==0):
+                        print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(bias)")
+                    else:
+                        print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(prev)")
+            output_inn.append(conv_PW)
+            if(show_detail):
+                print(conv_PW)
+        output.append(output_inn)
+
+    return output
+
+
+def FC(stride, show_detail):
+    # ======== 轉置輸入 FMap 檔案 ========
+    print("====================")
+    print("[系統]: 輸入 FMap 檔案，FC不用轉置")
+    #transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    # 讀取 bias 0 - 3 組合成新檔案
+    assem_bias("bias_storage.txt")
+
+    # ======== 讀取檔案 -- 確認通道數用 ========
+    channel_amount = 0
+    tile_w = 0
+    print("\n\n====================")
+    print("[系統]: 執行通道數檢查")
+    channel_amount, tile_w = channel_check()
+
+    # ======== 讀取檔案 -- 運算用 ========
+    # ==== tile ====
+    tile0 = []
+    print("\n\n====================")
+    print("[系統]: 讀取tile_buffer1.txt")
+    read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
+
+    if(show_detail):
+        print("[系統]: 以下為各 tile_buffer，供檢查")
+        # 印出 tile0 確認
+        print("\ntile_buffer1:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile0[i]), f"tile1_{i}: ", end="")
+            for j in range(0, len(tile0[i]), 1):
+                print(f"{tile0[i][j]:<5}", end="")
+            print("\n", end="")
+    
+    # ==== weight ====
+    weight = []
+    print("\n\n====================")
+
+    print("[系統]: 讀取weight_storage0.txt")
+    read_weight("weight_storage0.txt", weight)
+    print("[系統]: 讀取weight_storage1.txt")
+    read_weight("weight_storage1.txt", weight)
+
+    # ==== bias ====
+    print("[系統]: 讀取bias_storage.txt")
+    read_bias("bias_storage.txt", weight)
+
+    if(show_detail):
+        print("[系統]: 以下為各 weight_storage，供檢查\n")
+        print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+        print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}")
+    
+    # ======== 進行 FC 計算 ========
+    print("\n\n====================")
+    output = Calculation(stride, show_detail, weight, tile0, tile_w)
+    output.append([0.0])
+    output.append([0.0])
+
+    if(show_detail):
+        print("[系統]: 以下為最終計算結果")
+    
+    # 進位轉換
+    hex_output = []
+    for i in range(0, len(output), 1):
+        hex_output.append(DecToHex(output[i]))
+
+    if(show_detail):
+        print("output(Float10) =", output)
+        print("output( Q8.8  ) =", hex_output)
+        print("\n")
+    
+    # ======== 儲存運算結果 ========
+    print("[系統]: 正在儲存計算結果至 output_need_transpose.txt")
+    with open('output_need_transpose.txt', 'w', encoding='utf-8') as f:
+        for i in range(len(hex_output)):
+            for j in range(len(hex_output[i])):
+                if(j == len(hex_output[i]) - 1):
+                    f.write(str(hex_output[i][j]) + "\n")
+                else:
+                    f.write(str(hex_output[i][j]) + " ")
+    
+    transpose_txt("output_need_transpose.txt", "output.txt")
+
+    print("\n[完成]: FC 運算完成")
+    
+
+if __name__ == "__main__":
+    FC(stride = 1, show_detail = True)

@@ -77,6 +77,30 @@ def HexToDec(hex_input):
         
     return dec_output
 
+# ======== Hex to Dec ======== (Q16.16)
+def HexToDec_Q16_16(hex_input):
+    # Q16.16 表示有 16 個小數位
+    # Scale Factor = 2^16 = 65536.0
+    scale_factor = 65536.0
+    
+    dec_output = []
+    for hex_str in hex_input:
+        # 轉成 Raw Integer (32-bit 範圍: 0 ~ 4294967295)
+        raw_val = int(hex_str, 16)
+
+        # 處理 Sign Bit (32-bit 二補數轉換)
+        # Q16.16 是 32-bit 格式，MSB 是第 31 bit (即 >= 0x80000000)
+        if raw_val & 0x80000000:
+            # 若為負數，減去 2^32 (0x100000000)
+            signed_val = raw_val - 0x100000000
+        else:
+            signed_val = raw_val
+        
+        # 轉成浮點數
+        dec_output.append(signed_val / scale_factor)
+        
+    return dec_output
+
 # ======== Dec to Hec ======== (Q8.8)
 def DecToHex(dec_input):
     hex_output = []
@@ -264,7 +288,7 @@ def read_bias(bias_path, weight):
     
     # str 轉 int(16進制)
     weight_int = []
-    weight_int = HexToDec(bias_str_a)
+    weight_int = HexToDec_Q16_16(bias_str_a)
 
     # 將 bias 存入陣列的 [0]
     for i in range(0, len(bias_str_a), 1):

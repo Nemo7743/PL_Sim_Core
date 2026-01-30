@@ -1,0 +1,687 @@
+以下是我的DW運算測試資料，幫我生成相同格式的測試資料我想要確認我的運算是正確：
+
+bias_storage0.txt：
+0000000b
+
+bias_storage1.txt：
+0000001b
+
+bias_storage2.txt：
+0000002b
+
+bias_storage3.txt：
+0000003b
+
+tile_buffer1.txt：
+0000 1000 2000 3000
+0001 1001 2001 3001
+0002 1002 2002 3002
+0003 1003 2003 3003
+0004 1004 2004 3004
+0005 1005 2005 3005
+0006 1006 2006 3006
+0007 1007 2007 3007
+0008 1008 2008 3008
+0009 1009 2009 3009
+000A 100A 200A 300A
+000B 100B 200B 300B
+000C 100C 200C 300C
+000D 100D 200D 300D
+000E 100E 200E 300E
+000F 100F 200F 300F
+0010 1010 2010 3010
+0011 1011 2011 3011
+0012 1012 2012 3012
+0013 1013 2013 3013
+0014 1014 2014 3014
+0015 1015 2015 3015
+0016 1016 2016 3016
+0017 1017 2017 3017
+0018 1018 2018 3018
+0019 1019 2019 3019
+001A 101A 201A 301A
+001B 101B 201B 301B
+001C 101C 201C 301C
+001D 101D 201D 301D
+001E 101E 201E 301E
+001F 101F 201F 301F
+
+tile_buffer2.txt：
+0000 1000 2000 3000
+0001 1001 2001 3001
+0002 1002 2002 3002
+0003 1003 2003 3003
+0004 1004 2004 3004
+0005 1005 2005 3005
+0006 1006 2006 3006
+0007 1007 2007 3007
+0008 1008 2008 3008
+0009 1009 2009 3009
+000A 100A 200A 300A
+000B 100B 200B 300B
+000C 100C 200C 300C
+000D 100D 200D 300D
+000E 100E 200E 300E
+000F 100F 200F 300F
+0010 1010 2010 3010
+0011 1011 2011 3011
+0012 1012 2012 3012
+0013 1013 2013 3013
+0014 1014 2014 3014
+0015 1015 2015 3015
+0016 1016 2016 3016
+0017 1017 2017 3017
+0018 1018 2018 3018
+0019 1019 2019 3019
+001A 101A 201A 301A
+001B 101B 201B 301B
+001C 101C 201C 301C
+001D 101D 201D 301D
+001E 101E 201E 301E
+001F 101F 201F 301F
+
+tile_buffer3.txt：
+0000 1000 2000 3000
+0001 1001 2001 3001
+0002 1002 2002 3002
+0003 1003 2003 3003
+0004 1004 2004 3004
+0005 1005 2005 3005
+0006 1006 2006 3006
+0007 1007 2007 3007
+0008 1008 2008 3008
+0009 1009 2009 3009
+000A 100A 200A 300A
+000B 100B 200B 300B
+000C 100C 200C 300C
+000D 100D 200D 300D
+000E 100E 200E 300E
+000F 100F 200F 300F
+0010 1010 2010 3010
+0011 1011 2011 3011
+0012 1012 2012 3012
+0013 1013 2013 3013
+0014 1014 2014 3014
+0015 1015 2015 3015
+0016 1016 2016 3016
+0017 1017 2017 3017
+0018 1018 2018 3018
+0019 1019 2019 3019
+001A 101A 201A 301A
+001B 101B 201B 301B
+001C 101C 201C 301C
+001D 101D 201D 301D
+001E 101E 201E 301E
+001F 101F 201F 301F
+
+weight_storage0.txt：
+0000 0001 0002 0000
+0003 0004 0005 0000
+0006 0007 0008 0000
+
+weight_storage1.txt：
+0010 0011 0012 0000
+0013 0014 0015 0000
+0016 0017 0018 0000
+
+weight_storage2.txt：
+0020 0021 0022 0000
+0023 0024 0025 0000
+0026 0027 0028 0000
+
+weight_storage3.txt：
+0030 0031 0032 0000
+0033 0034 0035 0000
+0036 0037 0038 0000
+
+程式碼：
+# ======== 小工具 ========
+# 轉置txt
+def transpose_txt(input_file, output_file):
+    try:
+        # 1. 讀取檔案
+        with open(input_file, 'r', encoding='utf-8') as f:
+            # 讀取每一行，去除前後空白，並依據空格切割成 list
+            # 使用 if line.strip() 是為了避免讀取到空行
+            matrix = [line.strip().split() for line in f if line.strip()]
+
+        # 檢查是否有資料
+        if not matrix:
+            print("檔案是空的。")
+            return
+
+        # 2. 轉置資料
+        # zip(*matrix) 會將原本的 Row 拆開並重新組合成 Column
+        transposed_matrix = list(zip(*matrix))
+
+        # 3. 寫入新檔案
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for row in transposed_matrix:
+                # 將 tuple 轉回字串，並用空格連接
+                f.write(" ".join(row) + "\n")
+        
+        print(f"[系統]: {input_file} 轉置完成！已儲存至 {output_file}")
+
+    except FileNotFoundError:
+        print(f"找不到檔案：{input_file}")
+    except Exception as e:
+        print(f"發生錯誤：{e}")
+
+# 執行轉置
+#transpose_txt('tile_buffer3.txt', 'tile_buffer3.txt')
+
+
+'''
+# ======== Hex to Dec ======== (Q16.0)
+def HexToDec(hex_input):
+    dec_output = []
+    for i in range(len(hex_input)):
+        raw_val = int(hex_input[i], 16)
+        if raw_val & 0x8000:#判斷第 15 bit (MSB) 是否為 1
+            dec_output.append(raw_val - 0x10000)
+        else:
+            dec_output.append(raw_val)
+
+    return dec_output
+
+
+# ======== Dec to Hec ======== (Q16.0)
+def DecToHex(dec_input):
+    hex_output = []
+    for i in range(len(dec_input)):
+        hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
+
+    return hex_output
+'''
+
+
+# ======== Hex to Dec ======== (Q8.8)
+def HexToDec(hex_input):
+    scale_factor = 256.0
+    dec_output = []
+    for hex_str in hex_input:
+        # 轉成 Raw Integer (0 ~ 65535)
+        raw_val = int(hex_str, 16)
+
+        # 處理 Sign Bit (二補數轉換)
+        # 如果第 15 bit 是 1 (即 >= 0x8000)，代表是負數
+        if raw_val & 0x8000:
+            signed_val = raw_val - 0x10000
+        else:
+            signed_val = raw_val
+        
+        # 轉成浮點數
+        dec_output.append(signed_val / scale_factor)
+        
+    return dec_output
+
+# ======== Dec to Hec ======== (Q8.8)
+def DecToHex(dec_input):
+    hex_output = []
+    scale_factor = 256.0
+    
+    # Q8.8 (Signed 16-bit) 的整數範圍限制
+    MAX_VAL = 32767   # 0x7FFF
+    MIN_VAL = -32768  # 0x8000
+
+    for val in dec_input:
+        # 轉換為固定點數整數 (乘上 2^8 並四捨五入)
+        int_val = int(round(val * scale_factor))
+
+        # 飽和截斷
+        # 若超過表示範圍，強制鎖定在最大或最小值
+        if int_val > MAX_VAL:
+            int_val = MAX_VAL
+        elif int_val < MIN_VAL:
+            int_val = MIN_VAL
+
+        # 轉回 Hex 字串 (處理負數顯示 & 0xFFFF)
+        hex_output.append(f"{int_val & 0xFFFF:04X}")
+
+    return hex_output
+
+
+
+# ======== 讀取檔案 -- 確認通道數用 ========
+def channel_check():
+    with open("bias_storage.txt", "r", encoding = "utf-8") as f:
+        content = f.read().split()
+        bias_len = len(content)
+        if(bias_len != 4):
+            print(f"[錯誤]: Bias 數量應該要是 4，但偵測到 {bias_len} 個 bias")
+            return "FUC it's wrong"
+
+    with open("tile_buffer1_Tr.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile0_amount = content.count('\n')
+        else:
+            channel_tile0_amount = content.count('\n') + 1
+
+    with open("tile_buffer2_Tr.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile1_amount = content.count('\n')
+        else:
+            channel_tile1_amount = content.count('\n') + 1
+
+    with open("tile_buffer3_Tr.txt", "r", encoding = "utf-8") as f:
+        content = f.read()
+        if content.endswith('\n'):
+            channel_tile2_amount = content.count('\n')
+        else:
+            channel_tile2_amount = content.count('\n') + 1
+
+
+    if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount):
+        print("[錯誤]: 三個輸入文本的通道數量不相同，到底為什麼可以犯這種錯 =.=")
+    else:
+        channel_amount = channel_tile0_amount
+        tile_w = len(content.split())//channel_amount
+        if(tile_w%2 == 0):# W 為偶數，沒問題
+            print("[通過]: 通道檢查通過，無錯誤，夯")
+            return channel_amount, tile_w
+        else:
+            print("[錯誤]: W 不應該為奇數，你個SB")
+            return channel_amount, tile_w
+
+
+'''
+channel_amount = 0
+tile_w = 0
+print("[系統]: 執行輸入文本檢查")
+channel_amount, tile_w = channel_check()
+'''
+
+
+
+# ======== 讀取檔案 -- 運算用 ========
+# ==== tile ====
+def read_tile(tile_path, tile, channel_amount, tile_w):
+    with open(tile_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        tile_str = f.read().split()
+
+        # str 轉 int(16進制)
+        tile_int = []
+        tile_int = HexToDec(tile_str)
+        
+        # 將 tile 的 channel 切開並存為 2 維 list
+        for i in range(0, channel_amount, 1):
+            tile.append(tile_int[i*tile_w+0:i*tile_w+tile_w])
+'''        
+tile0 = []
+tile1 = []
+tile2 = []
+print("\n\n====================")
+print("[系統]: 讀取tile_buffer1.txt")
+read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
+print("[系統]: 讀取tile_buffer2.txt")
+read_tile("tile_buffer2.txt", tile1, channel_amount, tile_w)
+print("[系統]: 讀取tile_buffer3.txt")
+read_tile("tile_buffer3.txt", tile2, channel_amount, tile_w)
+
+print("[系統]: 以下為各 tile_buffer，供檢查")
+# 印出 tile0 確認
+print("\ntile_buffer1:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile0[i]), f"tile1_{i}: ", tile0[i])
+# 印出 tile1 確認
+print("\ntile_buffer2:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile1[i]), f"tile2_{i}: ", tile1[i])
+# 印出 tile2 確認
+print("\ntile_buffer3:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
+'''
+
+# ==== weight ====
+def read_weight(weight_path, weight):
+    with open(weight_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        weight_str_a = f.read().split()
+
+    # 將讀取到的權重做成一個 list
+    weight_str_b = []
+    for i in range(0, len(weight_str_a)+1, 1):
+        if(i == 0):
+            weight_str_b.append('0')
+        elif(i%4 == 0):
+            continue
+        else:
+            weight_str_b.append(weight_str_a[i-1])
+
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec(weight_str_b)
+    
+    # 將本次權重插入 list 形成二維陣列
+    weight.append(weight_int)
+'''
+weight = []
+print("\n\n====================")
+print("[系統]: 讀取weight_storage0.txt")
+read_weight("weight_storage0.txt", weight)
+print("[系統]: 讀取weight_storage1.txt")
+read_weight("weight_storage1.txt", weight)
+print("[系統]: 讀取weight_storage2.txt")
+read_weight("weight_storage2.txt", weight)
+print("[系統]: 讀取weight_storage3.txt")
+read_weight("weight_storage3.txt", weight)
+
+print("[系統]: 以下為各 weight_storage，供檢查\n")
+print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}\n")
+print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
+print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
+'''
+# ==== bias ====
+def read_bias(bias_path, weight):
+    with open(bias_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        bias_str_a = f.read().split()
+    
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec(bias_str_a)
+
+    # 將 bias 存入陣列的 [0]
+    for i in range(0, len(bias_str_a), 1):
+        weight[i][0] = weight_int[i]
+
+def assem_bias(bias_path):
+    bias_str = []
+
+    with open("bias_storage0.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage1.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage2.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("bias_storage3.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+
+    with open(bias_path, "w", encoding = "utf-8") as f:
+        for i in range(0, len(bias_str), 1):
+            f.write(bias_str[i])
+            f.write("\n")
+
+
+
+# ======== 進行 DW 計算 ========
+def Calculation(stride = 2, show_detail = True, weight = [], tile0 = [], tile1 = [], tile2 = [], tile_w = 0):
+    
+
+    if(stride < 1 or stride > 2 or weight == [] or tile0 == [] or tile1 == [] or tile2 == [] or tile_w == 0):
+        print("[錯誤]: 函式 DW_Calc 的參數輸入錯誤，這很有問題")
+        return ["錯爛"]
+    
+    if(stride == 2):
+        '''
+        stride = 2 的padding 情況: 
+
+        0 x x x x x x x x x x x x x x 0(沒算到)
+        0 x x x x x x x x x x x x x x 0(沒算到)
+        0 x x x x x x x x x x x x x x 0(沒算到)
+
+        '''
+        if(show_detail):
+            print("[系統]: 以下為計算細節輸出，供檢查運算過程")
+        conv331 = 0
+        output = []
+        for i in range(len(weight)):
+            # 初始化暫存
+            output_inn = []
+
+            for j in range(0, tile_w-stride+2, stride):
+                conv331 = weight[i][0]
+                if(show_detail):
+                    print("bias: ", conv331)
+                # ======== padding左 ========
+                if(j==0):#padding左
+                    conv331 = weight[i][1]*0 + weight[i][4]*0 + weight[i][7]*0 + conv331
+                    if(show_detail):
+                        print(f"{conv331:>20} = {weight[i][1]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{weight[i][4]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{weight[i][7]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{conv331}(bias)")
+                    
+                    for k in range(1, 3, 1):
+                        conv331 = weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1] + conv331
+                        if(show_detail):
+                            print(f"{conv331:>20} = {weight[i][k+1]:>15}(W{i}) * {tile0[i][j+k-1]:>15}(T1)  +  "
+                                f"{weight[i][k+3+1]:>15}(W{i}) * {tile1[i][j+k-1]:>15}(T2)  +  "
+                                f"{weight[i][k+6+1]:>15}(W{i}) * {tile2[i][j+k-1]:>15}(T3)  +  "
+                                f"{conv331 - (weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1])}(prev)")
+
+                # ======== 無padding ========        
+                else:
+                    for k in range(1, 4, 1):
+                        conv331 = weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2] + conv331
+
+                        if(show_detail):
+                            if(k == 1):
+                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
+                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
+                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
+                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(bias)")
+                            else:
+                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
+                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
+                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
+                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(prev)")
+                output_inn.append(conv331)
+            output.append(output_inn)
+
+    
+    elif(stride == 1):
+        '''
+        stride = 1 的padding 情況: 基本一樣
+
+        0 x x x x x x x x x x x x x x 0
+        0 x x x x x x x x x x x x x x 0
+        0 x x x x x x x x x x x x x x 0
+
+        '''
+        if(show_detail):
+            print("[系統]: 以下為計算細節輸出，供檢查運算過程")
+        conv331 = 0
+        output = []
+        for i in range(len(weight)):
+            # 初始化暫存
+            output_inn = []
+
+            for j in range(0, tile_w-stride+1, stride):
+                conv331 = weight[i][0]
+                if(show_detail):
+                    print("bias: ", conv331)
+                # ======== padding左 ========
+                if(j==0):#padding左
+                    conv331 = weight[i][1]*0 + weight[i][4]*0 + weight[i][7]*0 + conv331
+                    if(show_detail):
+                        print(f"{conv331:>20} = {weight[i][1]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{weight[i][4]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{weight[i][7]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{conv331}(bias)")
+                    
+                    for k in range(1, 3, 1):
+                        conv331 = weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1] + conv331
+                        if(show_detail):
+                            print(f"{conv331:>20} = {weight[i][k+1]:>15}(W{i}) * {tile0[i][j+k-1]:>15}(T1)  +  "
+                                f"{weight[i][k+3+1]:>15}(W{i}) * {tile1[i][j+k-1]:>15}(T2)  +  "
+                                f"{weight[i][k+6+1]:>15}(W{i}) * {tile2[i][j+k-1]:>15}(T3)  +  "
+                                f"{conv331 - (weight[i][k+1]*tile0[i][j+k-1] + weight[i][k+3+1]*tile1[i][j+k-1] + weight[i][k+6+1]*tile2[i][j+k-1])}(prev)")
+                            
+
+                # ======== padding右 ========
+                elif(j == tile_w-stride):
+                    for k in range(1, 3, 1):
+                        conv331 = weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2] + conv331
+                        if(show_detail):
+                            if(k == 1):
+                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
+                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
+                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
+                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(bias)")
+                            else:
+                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
+                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
+                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
+                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(prev)")
+                    
+                    conv331 = weight[i][3]*0 + weight[i][6]*0 + weight[i][9]*0 + conv331
+                    if(show_detail):
+                        print(f"{conv331:>20} = {weight[i][3]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{weight[i][6]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{weight[i][9]:>15}(W{i}) * {0:>15}(padd)+  "
+                            f"{conv331}(prev)")
+
+
+                # ======== 無padding ========
+                else:
+                    for k in range(1, 4, 1):
+                        conv331 = weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2] + conv331
+                        if(show_detail):
+                            if(k == 1):
+                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
+                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
+                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
+                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(bias)")
+                            else:
+                                print(f"{conv331:>20} = {weight[i][k]:>15}(W{i}) * {tile0[i][j+k-2]:>15}(T1)  +  "
+                                    f"{weight[i][k+3]:>15}(W{i}) * {tile1[i][j+k-2]:>15}(T2)  +  "
+                                    f"{weight[i][k+6]:>15}(W{i}) * {tile2[i][j+k-2]:>15}(T3)  +  "
+                                    f"{conv331 - (weight[i][k]*tile0[i][j+k-2] + weight[i][k+3]*tile1[i][j+k-2] + weight[i][k+6]*tile2[i][j+k-2])}(prev)")
+                output_inn.append(conv331)
+            output.append(output_inn)
+
+
+    else:
+        print("[錯誤]: 防呆都有寫你還可以進到這裡來，你本人就是 Bug 吧......")
+        return []
+
+    return output
+
+
+'''
+output = DW_Calc(2, True)
+print("\n[系統]: 以下為最終計算結果")
+hex_output = DecToHeX(output)
+print("output(int10) =", output)
+print("output(int16) =", hex_output)
+
+
+print("\n[系統]: 正在儲存計算結果至 output.txt")
+with open('output.txt', 'w', encoding='utf-8') as f:
+    for i in range(len(hex_output)):
+        f.write(str(hex_output[i]) + " ")
+
+print("\n[完成]: DW 運算完成")
+'''
+
+def DW(stride, show_detail):
+    # ======== 轉置輸入 FMap 檔案 ========
+    print("====================")
+    print("[系統]: 轉置輸入 FMap 檔案")
+    transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
+    transpose_txt("tile_buffer2.txt", "tile_buffer2_Tr.txt")
+    transpose_txt("tile_buffer3.txt", "tile_buffer3_Tr.txt")
+    # 讀取 bias 0 - 3 組合成新檔案
+    assem_bias("bias_storage.txt")
+
+    # ======== 讀取檔案 -- 確認通道數用 ========
+    channel_amount = 0
+    tile_w = 0
+    print("\n\n====================")
+    print("[系統]: 執行通道數檢查")
+    channel_amount, tile_w = channel_check()
+
+    # ======== 讀取檔案 -- 運算用 ========
+    # ==== tile ====
+    tile0 = []
+    tile1 = []
+    tile2 = []
+    print("\n\n====================")
+
+    print("[系統]: 讀取tile_buffer1_Tr.txt")
+    read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
+
+    print("[系統]: 讀取tile_buffer2_Tr.txt")
+    read_tile("tile_buffer2_Tr.txt", tile1, channel_amount, tile_w)
+
+    print("[系統]: 讀取tile_buffer3_Tr.txt")
+    read_tile("tile_buffer3_Tr.txt", tile2, channel_amount, tile_w)
+
+    if(show_detail):
+        print("[系統]: 以下為各 tile_buffer，供檢查")
+        # 印出 tile0 確認
+        print("\ntile_buffer1:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile0[i]), f"tile1_{i}: ", tile0[i])
+        # 印出 tile1 確認
+        print("\ntile_buffer2:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile1[i]), f"tile2_{i}: ", tile1[i])
+        # 印出 tile2 確認
+        print("\ntile_buffer3:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
+    
+    # ==== weight ====
+    weight = []
+    print("\n\n====================")
+
+    print("[系統]: 讀取weight_storage0.txt")
+    read_weight("weight_storage0.txt", weight)
+    print("[系統]: 讀取weight_storage1.txt")
+    read_weight("weight_storage1.txt", weight)
+    print("[系統]: 讀取weight_storage2.txt")
+    read_weight("weight_storage2.txt", weight)
+    print("[系統]: 讀取weight_storage3.txt")
+    read_weight("weight_storage3.txt", weight)
+    
+    # ==== bias ====
+    print("[系統]: 讀取bias_storage.txt")
+    read_bias("bias_storage.txt", weight)
+
+    if(show_detail):
+        print("[系統]: 以下為各 weight_storage，供檢查\n")
+        print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+        print(f"weight_storage1:\nbias: {weight[1][0]}, W1: {weight[1][1:]}\n")
+        print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
+        print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
+
+    # ======== 進行 DW 計算 ========
+    print("\n\n====================")
+    output = Calculation(stride, show_detail, weight, tile0, tile1, tile2, tile_w)
+    if(show_detail):
+        print("[系統]: 以下為最終計算結果")
+
+    # 進位轉換
+    hex_output = []
+    for i in range(0, len(output), 1):
+        hex_output.append(DecToHex(output[i]))
+
+    if(show_detail):
+        print("output(Float10) =", output)
+        print("output( Q8.8  ) =", hex_output)
+        print("\n")
+
+    # ======== 儲存運算結果 ========
+    print("[系統]: 正在儲存計算結果至 output_need_transpose.txt")
+    with open('output_need_transpose.txt', 'w', encoding='utf-8') as f:
+        for i in range(len(hex_output)):
+            for j in range(len(hex_output[i])):
+                if(j == len(hex_output[i]) - 1):
+                    f.write(str(hex_output[i][j]) + "\n")
+                else:
+                    f.write(str(hex_output[i][j]) + " ")
+    
+    transpose_txt("output_need_transpose.txt", "output.txt")
+
+
+    print("\n[完成]: DW 運算完成")
+
+if __name__ == "__main__":
+    DW(stride = 2, show_detail = True)
