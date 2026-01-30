@@ -21,7 +21,7 @@ def DecToHex(dec_input):
 # ==========================================
 # 主處理函式
 # ==========================================
-def process_image_to_q16_0(image_path, output_folder="data"):
+def image_preprocessing(image_path, output_folder="Fmap_to_Conv1"):
     # 1. 檢查並建立輸出資料夾
     if not os.path.exists(output_folder):
         os.makedirs(output_folder)
@@ -93,9 +93,9 @@ def process_image_to_q16_0(image_path, output_folder="data"):
 # --- 主程式執行區 ---
 if __name__ == "__main__":
     # 請修改這裡的圖片路徑
-    input_image_path = "input.jpg" 
+    input_image_path = "input.jpg"
     
     if os.path.exists(input_image_path):
-        process_image_to_q16_0(input_image_path)
+        image_preprocessing(input_image_path)
     else:
         print(f"找不到檔案: {input_image_path}，請確認路徑。")
