@@ -34,7 +34,7 @@ def transpose_txt(input_file, output_file):
 #transpose_txt('tile_buffer3.txt', 'tile_buffer3.txt')
 
 
-
+'''
 # ======== Hex to Dec ======== (Q16.0)
 def HexToDec(hex_input):
     dec_output = []
@@ -55,9 +55,9 @@ def DecToHex(dec_input):
         hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
 
     return hex_output
-
-
 '''
+
+''''''
 # ======== Hex to Dec ======== (Q8.8)
 def HexToDec(hex_input):
     scale_factor = 256.0
@@ -102,7 +102,7 @@ def DecToHex(dec_input):
         hex_output.append(f"{int_val & 0xFFFF:04X}")
 
     return hex_output
-'''
+''''''
 
 
 # ======== 讀取檔案 -- 確認通道數用 ========

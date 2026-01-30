@@ -1,4 +1,209 @@
-import statistics
+以下是我的MaxPooling運算測試資料，幫我生成相同格式的測試資料我想要確認我的運算是正確的，其中使用的都是Q8.8：
+
+tile_buffer1.txt：(共 64*4 組數字)
+0000 1000 2000 3000
+0001 1001 2001 3001
+0002 1002 2002 3002
+0003 1003 2003 3003
+0004 1004 2004 3004
+0005 1005 2005 3005
+0006 1006 2006 3006
+0007 1007 2007 3007
+0008 1008 2008 3008
+0009 1009 2009 3009
+000A 100A 200A 300A
+000B 100B 200B 300B
+000C 100C 200C 300C
+000D 100D 200D 300D
+000E 100E 200E 300E
+000F 100F 200F 300F
+0010 1010 2010 3010
+0011 1011 2011 3011
+0012 1012 2012 3012
+0013 1013 2013 3013
+0014 1014 2014 3014
+0015 1015 2015 3015
+0016 1016 2016 3016
+0017 1017 2017 3017
+0018 1018 2018 3018
+0019 1019 2019 3019
+001A 101A 201A 301A
+001B 101B 201B 301B
+001C 101C 201C 301C
+001D 101D 201D 301D
+001E 101E 201E 301E
+001F 101F 201F 301F
+0020 1020 2020 3020
+0021 1021 2021 3021
+0022 1022 2022 3022
+0023 1023 2023 3023
+0024 1024 2024 3024
+0025 1025 2025 3025
+0026 1026 2026 3026
+0027 1027 2027 3027
+0028 1028 2028 3028
+0029 1029 2029 3029
+002A 102A 202A 302A
+002B 102B 202B 302B
+002C 102C 202C 302C
+002D 102D 202D 302D
+002E 102E 202E 302E
+002F 102F 202F 302F
+0030 1030 2030 3030
+0031 1031 2031 3031
+0032 1032 2032 3032
+0033 1033 2033 3033
+0034 1034 2034 3034
+0035 1035 2035 3035
+0036 1036 2036 3036
+0037 1037 2037 3037
+0038 1038 2038 3038
+0039 1039 2039 3039
+003A 103A 203A 303A
+003B 103B 203B 303B
+003C 103C 203C 303C
+003D 103D 203D 303D
+003E 103E 203E 303E
+003F 103F 203F 303F
+
+tile_buffer2.txt：(共 64*4 組數字)
+0000 1000 2000 3000
+0001 1001 2001 3001
+0002 1002 2002 3002
+0003 1003 2003 3003
+0004 1004 2004 3004
+0005 1005 2005 3005
+0006 1006 2006 3006
+0007 1007 2007 3007
+0008 1008 2008 3008
+0009 1009 2009 3009
+000A 100A 200A 300A
+000B 100B 200B 300B
+000C 100C 200C 300C
+000D 100D 200D 300D
+000E 100E 200E 300E
+000F 100F 200F 300F
+0010 1010 2010 3010
+0011 1011 2011 3011
+0012 1012 2012 3012
+0013 1013 2013 3013
+0014 1014 2014 3014
+0015 1015 2015 3015
+0016 1016 2016 3016
+0017 1017 2017 3017
+0018 1018 2018 3018
+0019 1019 2019 3019
+001A 101A 201A 301A
+001B 101B 201B 301B
+001C 101C 201C 301C
+001D 101D 201D 301D
+001E 101E 201E 301E
+001F 101F 201F 301F
+0020 1020 2020 3020
+0021 1021 2021 3021
+0022 1022 2022 3022
+0023 1023 2023 3023
+0024 1024 2024 3024
+0025 1025 2025 3025
+0026 1026 2026 3026
+0027 1027 2027 3027
+0028 1028 2028 3028
+0029 1029 2029 3029
+002A 102A 202A 302A
+002B 102B 202B 302B
+002C 102C 202C 302C
+002D 102D 202D 302D
+002E 102E 202E 302E
+002F 102F 202F 302F
+0030 1030 2030 3030
+0031 1031 2031 3031
+0032 1032 2032 3032
+0033 1033 2033 3033
+0034 1034 2034 3034
+0035 1035 2035 3035
+0036 1036 2036 3036
+0037 1037 2037 3037
+0038 1038 2038 3038
+0039 1039 2039 3039
+003A 103A 203A 303A
+003B 103B 203B 303B
+003C 103C 203C 303C
+003D 103D 203D 303D
+003E 103E 203E 303E
+003F 103F 203F 303F
+
+tile_buffer3.txt：(共 64*4 組數字)
+0000 1000 2000 3000
+0001 1001 2001 3001
+0002 1002 2002 3002
+0003 1003 2003 3003
+0004 1004 2004 3004
+0005 1005 2005 3005
+0006 1006 2006 3006
+0007 1007 2007 3007
+0008 1008 2008 3008
+0009 1009 2009 3009
+000A 100A 200A 300A
+000B 100B 200B 300B
+000C 100C 200C 300C
+000D 100D 200D 300D
+000E 100E 200E 300E
+000F 100F 200F 300F
+0010 1010 2010 3010
+0011 1011 2011 3011
+0012 1012 2012 3012
+0013 1013 2013 3013
+0014 1014 2014 3014
+0015 1015 2015 3015
+0016 1016 2016 3016
+0017 1017 2017 3017
+0018 1018 2018 3018
+0019 1019 2019 3019
+001A 101A 201A 301A
+001B 101B 201B 301B
+001C 101C 201C 301C
+001D 101D 201D 301D
+001E 101E 201E 301E
+001F 101F 201F 301F
+0020 1020 2020 3020
+0021 1021 2021 3021
+0022 1022 2022 3022
+0023 1023 2023 3023
+0024 1024 2024 3024
+0025 1025 2025 3025
+0026 1026 2026 3026
+0027 1027 2027 3027
+0028 1028 2028 3028
+0029 1029 2029 3029
+002A 102A 202A 302A
+002B 102B 202B 302B
+002C 102C 202C 302C
+002D 102D 202D 302D
+002E 102E 202E 302E
+002F 102F 202F 302F
+0030 1030 2030 3030
+0031 1031 2031 3031
+0032 1032 2032 3032
+0033 1033 2033 3033
+0034 1034 2034 3034
+0035 1035 2035 3035
+0036 1036 2036 3036
+0037 1037 2037 3037
+0038 1038 2038 3038
+0039 1039 2039 3039
+003A 103A 203A 303A
+003B 103B 203B 303B
+003C 103C 203C 303C
+003D 103D 203D 303D
+003E 103E 203E 303E
+003F 103F 203F 303F
+
+
+
+
+
+
+程式碼：
 # ======== 小工具 ========
 # 轉置txt
 def transpose_txt(input_file, output_file):
@@ -32,7 +237,8 @@ def transpose_txt(input_file, output_file):
         print(f"發生錯誤：{e}")
 
 # 執行轉置
-#transpose_txt('tile_buffer1.txt', 'tile_buffer1.txt')
+#transpose_txt('tile_buffer3.txt', 'tile_buffer3.txt')
+
 
 '''
 # ======== Hex to Dec ======== (Q16.0)
@@ -57,7 +263,7 @@ def DecToHex(dec_input):
     return hex_output
 '''
 
-
+''''''
 # ======== Hex to Dec ======== (Q8.8)
 def HexToDec(hex_input):
     scale_factor = 256.0
@@ -102,8 +308,7 @@ def DecToHex(dec_input):
         hex_output.append(f"{int_val & 0xFFFF:04X}")
 
     return hex_output
-
-
+''''''
 
 
 # ======== 讀取檔案 -- 確認通道數用 ========
@@ -129,17 +334,10 @@ def channel_check():
             channel_tile2_amount = content.count('\n')
         else:
             channel_tile2_amount = content.count('\n') + 1
-    
-    with open("tile_buffer4_Tr.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile3_amount = content.count('\n')
-        else:
-            channel_tile3_amount = content.count('\n') + 1
 
 
-    if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount or channel_tile3_amount != channel_tile0_amount or channel_tile3_amount != channel_tile1_amount or channel_tile3_amount != channel_tile2_amount):
-        print("[錯誤]: 四個輸入文本的通道數量不相同，到底為什麼可以犯這種錯 =.=")
+    if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount):
+        print("[錯誤]: 三個輸入文本的通道數量不相同，到底為什麼可以犯這種錯 =.=")
     else:
         channel_amount = channel_tile0_amount
         tile_w = len(content.split())//channel_amount
@@ -150,12 +348,14 @@ def channel_check():
             print("[錯誤]: W 不應該為奇數，你個SB")
             return channel_amount, tile_w
 
+
 '''
 channel_amount = 0
 tile_w = 0
 print("[系統]: 執行輸入文本檢查")
 channel_amount, tile_w = channel_check()
 '''
+
 
 
 # ======== 讀取檔案 -- 運算用 ========
@@ -172,12 +372,10 @@ def read_tile(tile_path, tile, channel_amount, tile_w):
         # 將 tile 的 channel 切開並存為 2 維 list
         for i in range(0, channel_amount, 1):
             tile.append(tile_int[i*tile_w+0:i*tile_w+tile_w])
-
-'''
+'''        
 tile0 = []
 tile1 = []
 tile2 = []
-tile3 = []
 print("\n\n====================")
 print("[系統]: 讀取tile_buffer1.txt")
 read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
@@ -185,8 +383,6 @@ print("[系統]: 讀取tile_buffer2.txt")
 read_tile("tile_buffer2.txt", tile1, channel_amount, tile_w)
 print("[系統]: 讀取tile_buffer3.txt")
 read_tile("tile_buffer3.txt", tile2, channel_amount, tile_w)
-print("[系統]: 讀取tile_buffer4.txt")
-read_tile("tile_buffer4.txt", tile3, channel_amount, tile_w)
 
 print("[系統]: 以下為各 tile_buffer，供檢查")
 # 印出 tile0 確認
@@ -201,55 +397,94 @@ for i in range(0, channel_amount, 1):
 print("\ntile_buffer3:")
 for i in range(0, channel_amount, 1):
     print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
-# 印出 tile3 確認
-print("\ntile_buffer4:")
-for i in range(0, channel_amount, 1):
-    print("W =", len(tile3[i]), f"tile4_{i}: ", tile3[i])
 '''
 
 # ==== weight ====
 # 不需要
 
-# ==== bias ====
-# 不需要
 
 
-# ======== 進行 GlbAvgPool 計算 ========
-def Calculation(stride = 1, show_detail = True, tile0 = [], tile1 = [], tile2 = [], tile3 = [], tile_w = 0):
-    conv_PW = 0
-    output = []
-    if(stride != -1):
-        print("[錯誤]: Stride 在 GlbAvgPool 不存在")
-        output.append("Poop")
-        return output
+# ======== 進行 MaxPool 計算 ========
+def Calculation(stride = 2, show_detail = True, tile0 = [], tile1 = [], tile2 = [], tile_w = 0):
+    
+    if(stride == 1):
+        print("[錯誤]: MaxPool 的 stride 是 2，不應該是 1")
+        return ["錯爛"]
 
-    for i in range(1024):
-        output_inn = []
-        avg_calc = []
-        for j in range(0, 4, 1):
-            avg_calc.append(tile0[i][j])
-        for j in range(0, 4, 1):
-            avg_calc.append(tile1[i][j])
-        for j in range(0, 4, 1):
-            avg_calc.append(tile2[i][j])
-        for j in range(0, 4, 1):
-            avg_calc.append(tile3[i][j])
-        output_inn.append(statistics.mean(avg_calc))
-        output.append(output_inn)
+    if(stride < 1 or stride > 2 or tile0 == [] or tile1 == [] or tile2 == [] or tile_w == 0):
+        print("[錯誤]: 函式 MaxPool_Calc 的參數輸入錯誤，這很有問題")
+        return ["錯爛"]
+    
+    if(stride == 2):
+        '''
+        stride = 2 的padding 情況: 
+
+        0 x x x x x x x x x x x x x x 0(沒算到)
+        0 x x x x x x x x x x x x x x 0(沒算到)
+        0 x x x x x x x x x x x x x x 0(沒算到)
+
+        '''
         if(show_detail):
-            print("mean num:", statistics.mean(avg_calc), "   in:", avg_calc)
+            print("[系統]: 以下為計算細節輸出，供檢查運算過程")
+        conv331 = 0
+        find_max = []
+        output = []
+        for i in range(4):
+            # 初始化暫存
+            output_inn = []
+            for j in range(0, tile_w-stride+2, stride):
+                find_max = []
+                # ======== padding左 ========
+                if(j==0):
+                    find_max.append(0)
+                    for k in range(1, 3, 1):
+                        find_max.append(tile0[i][j+k-1])
+                        find_max.append(tile1[i][j+k-1])
+                        find_max.append(tile2[i][j+k-1])
+                    if(show_detail):
+                        print(" Padd  ", "max num:", max(find_max), "   in:", find_max)
+
+                # ======== 無padding ========        
+                else:
+                    for k in range(1, 4, 1):
+                        find_max.append(tile0[i][j+k-2])
+                        find_max.append(tile1[i][j+k-2])
+                        find_max.append(tile2[i][j+k-2])
+                    if(show_detail):
+                        print("No Padd", "max num:", max(find_max), "   in:", find_max)
+                output_inn.append(max(find_max))
+            output.append(output_inn)
+
+    else:
+        print("[錯誤]: 防呆都有寫你還可以進到這裡來，你本人就是 Bug 吧......")
+        return []
 
     return output
 
 
-def GlbAvgPool(stride, show_detail):
+'''
+output = DW_Calc(2, True)
+print("\n[系統]: 以下為最終計算結果")
+hex_output = DecToHeX(output)
+print("output(int10) =", output)
+print("output(int16) =", hex_output)
+
+
+print("\n[系統]: 正在儲存計算結果至 output.txt")
+with open('output.txt', 'w', encoding='utf-8') as f:
+    for i in range(len(hex_output)):
+        f.write(str(hex_output[i]) + " ")
+
+print("\n[完成]: DW 運算完成")
+'''
+
+def MaxPool(stride, show_detail):
     # ======== 轉置輸入 FMap 檔案 ========
     print("====================")
     print("[系統]: 轉置輸入 FMap 檔案")
     transpose_txt("tile_buffer1.txt", "tile_buffer1_Tr.txt")
     transpose_txt("tile_buffer2.txt", "tile_buffer2_Tr.txt")
     transpose_txt("tile_buffer3.txt", "tile_buffer3_Tr.txt")
-    transpose_txt("tile_buffer4.txt", "tile_buffer4_Tr.txt")
 
     # ======== 讀取檔案 -- 確認通道數用 ========
     channel_amount = 0
@@ -263,58 +498,41 @@ def GlbAvgPool(stride, show_detail):
     tile0 = []
     tile1 = []
     tile2 = []
-    tile3 = []
     print("\n\n====================")
+
     print("[系統]: 讀取tile_buffer1_Tr.txt")
     read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
+
     print("[系統]: 讀取tile_buffer2_Tr.txt")
     read_tile("tile_buffer2_Tr.txt", tile1, channel_amount, tile_w)
+
     print("[系統]: 讀取tile_buffer3_Tr.txt")
     read_tile("tile_buffer3_Tr.txt", tile2, channel_amount, tile_w)
-    print("[系統]: 讀取tile_buffer4_Tr.txt")
-    read_tile("tile_buffer4_Tr.txt", tile3, channel_amount, tile_w)
 
     if(show_detail):
         print("[系統]: 以下為各 tile_buffer，供檢查")
         # 印出 tile0 確認
         print("\ntile_buffer1:")
         for i in range(0, channel_amount, 1):
-            print("W =", len(tile0[i]), f"tile1_{i}: ", end="")
-            for j in range(0, len(tile0[i]), 1):
-                print(f"{tile0[i][j]:<5}", end="")
-            print("\n", end="")
+            print("W =", len(tile0[i]), f"tile1_{i}: ", tile0[i])
         # 印出 tile1 確認
         print("\ntile_buffer2:")
         for i in range(0, channel_amount, 1):
-            print("W =", len(tile1[i]), f"tile2_{i}: ", end="")
-            for j in range(0, len(tile1[i]), 1):
-                print(f"{tile1[i][j]:<5}", end="")
-            print("\n", end="")
+            print("W =", len(tile1[i]), f"tile2_{i}: ", tile1[i])
         # 印出 tile2 確認
         print("\ntile_buffer3:")
         for i in range(0, channel_amount, 1):
-            print("W =", len(tile2[i]), f"tile3_{i}: ", end="")
-            for j in range(0, len(tile2[i]), 1):
-                print(f"{tile2[i][j]:<5}", end="")
-            print("\n", end="")
-        # 印出 tile3 確認
-        print("\ntile_buffer4:")
-        for i in range(0, channel_amount, 1):
-            print("W =", len(tile3[i]), f"tile4_{i}: ", end="")
-            for j in range(0, len(tile3[i]), 1):
-                print(f"{tile3[i][j]:<5}", end="")
-            print("\n", end="")
+            print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
     
     # ==== weight ====
     # 不需要
-
+    
     # ==== bias ====
     # 不需要
 
-    # ======== 進行 GlbAvgPool 計算 ========
+    # ======== 進行 MaxPool 計算 ========
     print("\n\n====================")
-    output = Calculation(stride, show_detail, tile0, tile1, tile2, tile3, tile_w)
-
+    output = Calculation(stride, show_detail, tile0, tile1, tile2, tile_w)
     if(show_detail):
         print("[系統]: 以下為最終計算結果")
 
@@ -327,7 +545,7 @@ def GlbAvgPool(stride, show_detail):
         print("output(Float10) =", output)
         print("output( Q8.8  ) =", hex_output)
         print("\n")
-    
+
     # ======== 儲存運算結果 ========
     print("[系統]: 正在儲存計算結果至 output_need_transpose.txt")
     with open('output_need_transpose.txt', 'w', encoding='utf-8') as f:
@@ -340,7 +558,8 @@ def GlbAvgPool(stride, show_detail):
     
     transpose_txt("output_need_transpose.txt", "output.txt")
 
-    print("\n[完成]: GlbAvgPool 運算完成")
+
+    print("\n[完成]: MaxPool 運算完成")
 
 if __name__ == "__main__":
-    GlbAvgPool(stride = -1, show_detail = True)
+    MaxPool(stride = 2, show_detail = True)
