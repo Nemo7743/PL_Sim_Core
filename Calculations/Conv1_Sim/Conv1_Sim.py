@@ -552,7 +552,7 @@ def Conv1(stride, show_detail):
                 else:
                     f.write(str(hex_output[i][j]) + " ")
     
-    transpose_txt("output_need_transpose.txt", "output.txt")
+    transpose_txt("output_need_transpose.txt", "data/output.txt")
 
     print("\n[完成]: Conv1 運算完成")
 
