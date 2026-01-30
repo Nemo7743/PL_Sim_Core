@@ -1,6 +1,6 @@
 # ======== 小工具 ========
 # 轉置txt
-def transpose_txt(input_file, output_file):
+def transpose_txt(input_file, output_file, show_detail):
     try:
         # 1. 讀取檔案
         with open(input_file, 'r', encoding='utf-8') as f:
@@ -23,7 +23,7 @@ def transpose_txt(input_file, output_file):
                 # 將 tuple 轉回字串，並用空格連接
                 f.write(" ".join(row) + "\n")
         
-        print(f"[系統]: {input_file} 轉置完成！已儲存至 {output_file}")
+        if(show_detail): print(f"[系統]: {input_file} 轉置完成！已儲存至 {output_file}")
 
     except FileNotFoundError:
         print(f"找不到檔案：{input_file}")
@@ -297,7 +297,7 @@ def assem_bias(bias_path):
 
 
 # ======== 進行 Conv1 計算 ========
-def Calculation(stride = 2, show_detail = True, weight = [], tile0 = [], tile1 = [], tile2 = [], tile_w = 0):
+def Calculation(stride = 2, show_detail = True, weight = None, tile0 = None, tile1 = None, tile2 = None, tile_w = 0):
 
     if(stride < 1 or stride > 2 or weight == [] or tile0 == [] or tile1 == [] or tile2 == [] or tile_w == 0):
         print("[錯誤]: 函式 Conv1_Calc 的參數輸入錯誤，這很有問題")
@@ -459,9 +459,9 @@ def Conv1(stride, show_detail):
     if(show_detail):
         print("====================")
         print("[系統]: 轉置輸入 FMap 檔案")
-    transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt")
-    transpose_txt("data/tile_buffer2.txt", "tile_buffer2_Tr.txt")
-    transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt")
+    transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt", show_detail)
+    transpose_txt("data/tile_buffer2.txt", "tile_buffer2_Tr.txt", show_detail)
+    transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt", show_detail)
     # 讀取 bias 0 - 3 組合成新檔案
     assem_bias("bias_storage.txt")
 
@@ -552,9 +552,10 @@ def Conv1(stride, show_detail):
                 else:
                     f.write(str(hex_output[i][j]) + " ")
     
-    transpose_txt("output_need_transpose.txt", "data/output.txt")
+    transpose_txt("output_need_transpose.txt", "data/output.txt", show_detail)
+    if(show_detail): print("\n")
 
-    print("\n[完成]: Conv1 運算完成")
+    print("[完成]: Conv1 運算完成")
 
 if __name__ == "__main__":
     Conv1(stride = 2, show_detail = True)
