@@ -130,41 +130,21 @@ def DecToHex(dec_input):
 
 
 # ======== 讀取檔案 -- 確認通道數用 ========
-def channel_check():
-    with open("bias_storage.txt", "r", encoding = "utf-8") as f:
-        content = f.read().split()
-        bias_len = len(content)
-        if(bias_len != 4):
-            print(f"[錯誤]: Bias 數量應該要是 4，但偵測到 {bias_len} 個 bias")
-            return "FUC it's wrong"
-
-    with open("tile_buffer1_Tr.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile0_amount = content.count('\n')
-        else:
-            channel_tile0_amount = content.count('\n') + 1
-
-    with open("tile_buffer2_Tr.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile1_amount = content.count('\n')
-        else:
-            channel_tile1_amount = content.count('\n') + 1
-
-    with open("tile_buffer3_Tr.txt", "r", encoding = "utf-8") as f:
-        content = f.read()
-        if content.endswith('\n'):
-            channel_tile2_amount = content.count('\n')
-        else:
-            channel_tile2_amount = content.count('\n') + 1
-
+def channel_check(tile0 = None, tile1 = None, tile2 = None, weight = None):
+    
+    if(len(weight) != 4):
+        print(f"[錯誤]: Bias 數量應該要是 4，但偵測到 {len(weight)} 個 bias")
+        return "FUC it's wrong"
+    
+    channel_tile0_amount = len(tile0)
+    channel_tile1_amount = len(tile1)
+    channel_tile2_amount = len(tile2)
 
     if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount):
         print("[錯誤]: 三個輸入文本的通道數量不相同，到底為什麼可以犯這種錯 =.=")
     else:
         channel_amount = channel_tile0_amount
-        tile_w = len(content.split())//channel_amount
+        tile_w = len(tile0[0])
         if(tile_w%2 == 0):# W 為偶數，沒問題
             print("[通過]: 通道檢查通過，無錯誤，夯")
             return channel_amount, tile_w
@@ -454,8 +434,20 @@ with open('output.txt', 'w', encoding='utf-8') as f:
 print("\n[完成]: DW 運算完成")
 '''
 
-def Conv1(stride, show_detail):
-    # ======== 轉置輸入 FMap 檔案 ========
+def Conv1(tile0, tile1, tile2, weight, stride, show_detail):
+    '''
+    Docstring for Conv1
+    
+    :param tile0: 二維陣列[ in_channel(0-2) ][ w(0-127) ]
+    :param tile1: 二維陣列[ in_channel(0-2) ][ w(0-127) ]
+    :param tile2: 二維陣列[ in_channel(0-2) ][ w(0-127) ]
+    :param weight: 二維陣列[ out_channel(0-3) ][ b(0) + w(1-27) ]
+    :param stride: 必須是2
+    :param show_detail: 要不要顯示運算過程
+    '''
+
+    '''
+    # ======== 轉置輸入 FMap 檔案 ======== (這個部分外部讀取檔案的程式碼已經先轉置過了，不用做)
     if(show_detail):
         print("====================")
         print("[系統]: 轉置輸入 FMap 檔案")
@@ -464,29 +456,27 @@ def Conv1(stride, show_detail):
     transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt", show_detail)
     # 讀取 bias 0 - 3 組合成新檔案
     assem_bias("bias_storage.txt")
+    '''
 
-    # ======== 讀取檔案 -- 確認通道數用 ========
+    # ======== 確認通道數 ========
     channel_amount = 0
     tile_w = 0
     if(show_detail):
         print("\n\n====================")
         print("[系統]: 執行通道數檢查")
-    channel_amount, tile_w = channel_check()
+    channel_amount, tile_w = channel_check(tile0, tile1, tile2, weight)
 
-    # ======== 讀取檔案 -- 運算用 ========
+    # ======== 展示當前運算的 Fmap 和 Weight ========
     # ==== tile ====
-    tile0 = []
-    tile1 = []
-    tile2 = []
     if(show_detail): print("\n\n====================")
-
+    '''
     if(show_detail): print("[系統]: 讀取tile_buffer1_Tr.txt")
     read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
     if(show_detail): print("[系統]: 讀取tile_buffer2_Tr.txt")
     read_tile("tile_buffer2_Tr.txt", tile1, channel_amount, tile_w)
     if(show_detail): print("[系統]: 讀取tile_buffer3_Tr.txt")
     read_tile("tile_buffer3_Tr.txt", tile2, channel_amount, tile_w)
-
+    '''
     if(show_detail):
         print("[系統]: 以下為各 tile_buffer，供檢查")
         # 印出 tile0 確認
@@ -503,9 +493,8 @@ def Conv1(stride, show_detail):
             print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
     
     # ==== weight ====
-    weight = []
     if(show_detail): print("\n\n====================")
-
+    '''
     if(show_detail): print("[系統]: 讀取weight_storage0.txt")
     read_weight("data/weight_storage0.txt", weight)
     if(show_detail): print("[系統]: 讀取weight_storage1.txt")
@@ -514,11 +503,12 @@ def Conv1(stride, show_detail):
     read_weight("data/weight_storage2.txt", weight)
     if(show_detail): print("[系統]: 讀取weight_storage3.txt")
     read_weight("data/weight_storage3.txt", weight)
-    
+    '''
     # ==== bias ====
+    '''
     if(show_detail): print("[系統]: 讀取bias_storage.txt")
     read_bias("bias_storage.txt", weight)
-
+    '''
     if(show_detail):
         print("[系統]: 以下為各 weight_storage，供檢查\n")
         print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
@@ -526,36 +516,25 @@ def Conv1(stride, show_detail):
         print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
         print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
     
-    # ======== 進行 DW 計算 ========
+    # ======== 進行 Conv1 計算 ========
     if(show_detail): print("\n\n====================")
     output = Calculation(stride, show_detail, weight, tile0, tile1, tile2, tile_w)
     if(show_detail):
         print("[系統]: 以下為最終計算結果")
 
-    # 進位轉換
-    hex_output = []
-    for i in range(0, len(output), 1):
-        hex_output.append(DecToHex(output[i]))
+    if(show_detail):
+        # 進位轉換
+        hex_output = []
+        for i in range(0, len(output), 1):
+            hex_output.append(DecToHex(output[i]))
 
     if(show_detail):
         print("output(Float10) =", output)
         print("output( Q8.8  ) =", hex_output)
         print("\n")
-
-    # ======== 儲存運算結果 ========
-    if(show_detail): print("[系統]: 正在儲存計算結果至 output_need_transpose.txt")
-    with open('output_need_transpose.txt', 'w', encoding='utf-8') as f:
-        for i in range(len(hex_output)):
-            for j in range(len(hex_output[i])):
-                if(j == len(hex_output[i]) - 1):
-                    f.write(str(hex_output[i][j]) + "\n")
-                else:
-                    f.write(str(hex_output[i][j]) + " ")
     
-    transpose_txt("output_need_transpose.txt", "data/output.txt", show_detail)
-    if(show_detail): print("\n")
-
     print("[完成]: Conv1 運算完成")
+    return output
 
 if __name__ == "__main__":
     Conv1(stride = 2, show_detail = True)

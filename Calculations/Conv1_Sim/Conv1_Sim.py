@@ -526,6 +526,7 @@ def Conv1(stride, show_detail):
         print(f"weight_storage2:\nbias: {weight[2][0]}, W2: {weight[2][1:]}\n")
         print(f"weight_storage3:\nbias: {weight[3][0]}, W3: {weight[3][1:]}")
     
+    
     # ======== 進行 DW 計算 ========
     if(show_detail): print("\n\n====================")
     output = Calculation(stride, show_detail, weight, tile0, tile1, tile2, tile_w)
