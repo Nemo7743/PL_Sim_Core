@@ -137,6 +137,28 @@ print("\n")
 print("tets matrix:\n", tile_buffer0)
 '''
 
+# 將二維運算結果寫入檔案
+def list_to_file(array_2d, filename, show_detail=False):
+    """
+    將二維陣列儲存為 txt 檔案。
+    格式：元素間以空格隔開，列與列之間換行。
+    
+    參數:
+    array_2d (list): 二維陣列 (List of Lists)
+    filename (str): 檔案名稱 (包含路徑與副檔名，如 'output.txt')
+    """
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            for row in array_2d:
+                # 1. map(str, row): 將列中的每個元素 (如數字) 強制轉為字串
+                # 2. ' '.join(...): 將這些字串用空格連接起來
+                # 3. f.write(...\n): 寫入檔案並加上換行符號
+                f.write(' '.join(map(str, row)) + '\n')
+        if(show_detail):
+            print(f"成功將二維陣列儲存至: {filename}")
+    except IOError as e:
+        print(f"檔案寫入錯誤: {e}")
+
 # ======== Hex to Dec ======== (Q8.8) (2D list)
 def HexToDec(hex_input):
     scale_factor = 256.0
@@ -342,6 +364,9 @@ def Conv1_implementation():
     # ========== 讀取 Fmap ==========
     f_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit0_Preprocessing\Fmap_to_Conv1")
     fmap = Load_All_Fmap(f_src_root)
+    '''
+    famp = [ 第幾個Fmap ][ channel ][ w ]
+    '''
 
     # ========== 讀取 Weight ==========
     w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\組譯器\WeightBiasRearranger\V4\output_data_split\conv1_column_filters")
@@ -355,17 +380,53 @@ def Conv1_implementation():
     bias = Load_All_Bias(w_b_src_root)
     for i in range(len(bias)):
         weight[i].insert(0, bias[i])
-    
 
-    # ========== 進行運算 ==========
-    output_Dec_neet_transpose = Conv1_Sim.Conv1(fmap[0], fmap[1], fmap[2], weight[0:4], 2, True)
-    # 進位轉換
-    output_Hex_need_tranpose = []
-    for i in range(0, len(output_Dec_neet_transpose), 1):
-        output_Hex_need_tranpose.append(DecToHex(output_Dec_neet_transpose[i]))
-    # 轉置========================================================================================================== 需要注意，要等所有 Channel 都 concat 完，才能轉置
-    output_Hex = transpose_list(output_Hex_need_tranpose, True)
-    print("\n\n最終運算結果：", output_Hex)
+    
+    # 初始化最終回傳的三維陣列
+    o_tile = []
+    '''
+    o_tile = [ 第幾個Tile ][ channel ][ w ]
+    '''
+
+    for i in range(0, 128, 2):
+        #print(i, i+1, i+2)
+        output_Dec_neet_transpose = []
+
+        for j in range(0, 24, 4):
+            #print(j, j+1, j+2, j+3)
+            # ========== 進行運算並把運算結果 concat ==========
+            output_Dec_neet_transpose = output_Dec_neet_transpose + Conv1_Sim.Conv1(fmap[i], fmap[i+1], fmap[i+2], weight[j+0 : j+4], 2, False)
+
+        # 進位轉換
+        output_Hex_need_tranpose = []
+        '''
+        output_Hex_need_tranpose = [ channel ][ w ]
+        '''
+        for k in range(0, len(output_Dec_neet_transpose), 1):
+            output_Hex_need_tranpose.append(DecToHex(output_Dec_neet_transpose[k]))
+        # 轉置(等所有 Channel 都 concat 完，才轉置)
+        output_Hex = transpose_list(output_Hex_need_tranpose, False)
+        # 儲存運算結果
+        o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit1_Conv1\Fmap_to_MaxPool")
+        list_to_file(output_Hex, o_dst_root / f"row_{(i//2):03d}.txt")
+        # 加入最終輸出的三維陣列
+        o_tile.append(output_Hex)
+
+    # 加入 Padding Tile
+    p_tile = []
+    for i in range(len(output_Hex)):
+        inn_p_tile = []
+        for j in range(len(output_Hex[i])):
+            inn_p_tile.append("0000")
+        p_tile.append(inn_p_tile)
+
+    # 儲存 Padding Tile
+    o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit1_Conv1\Fmap_to_MaxPool")
+    list_to_file(p_tile, o_dst_root / f"row_ZZZ.txt")
+    # 加入最終輸出的三維陣列
+    o_tile.insert(0, p_tile)
+
+    return o_tile
     
 
 if __name__ == "__main__":
