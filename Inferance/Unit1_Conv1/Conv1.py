@@ -359,7 +359,20 @@ def Load_All_Bias(b_src_root):
     bias = HexToDec_Q16_16(buffer_2D_lst)
     return bias
 
+# ========== ReLU ==========
+def ReLU(input_matrix):
+    """
+    使用純 Python 列表生成式進行 ReLU 運算。
+    
+    參數:
+        input_matrix (list of lists): 輸入的二維列表
+    回傳:
+        list of lists: 經過 ReLU 處理後的二維列表
+    """
+    # 遍歷每一列 (row)，再遍歷列中的每一個值 (x)
+    return [[max(0, x) for x in row] for row in input_matrix]
 
+# =========== 執行運算 ===========
 def Conv1_implementation():
     # ========== 讀取 Fmap ==========
     f_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit0_Preprocessing\Fmap_to_Conv1")
@@ -396,7 +409,11 @@ def Conv1_implementation():
             #print(j, j+1, j+2, j+3)
             # ========== 進行運算並把運算結果 concat ==========
             output_Dec_neet_transpose = output_Dec_neet_transpose + Conv1_Sim.Conv1(fmap[i], fmap[i+1], fmap[i+2], weight[j+0 : j+4], 2, False)
+        
+        # ========== ReLU ==========
+        output_Dec_neet_transpose = ReLU(output_Dec_neet_transpose)
 
+        # ========== 資料處理及記錄 ==========
         # 進位轉換
         output_Hex_need_tranpose = []
         '''
@@ -412,17 +429,17 @@ def Conv1_implementation():
         # 加入最終輸出的三維陣列
         o_tile.append(output_Hex)
 
-    # 加入 Padding Tile
+
+    # ========== 加入 Padding Tile ==========
     p_tile = []
     for i in range(len(output_Hex)):
         inn_p_tile = []
         for j in range(len(output_Hex[i])):
             inn_p_tile.append("0000")
         p_tile.append(inn_p_tile)
-
     # 儲存 Padding Tile
-    o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit1_Conv1\Fmap_to_MaxPool")
-    list_to_file(p_tile, o_dst_root / f"row_ZZZ.txt")
+    # o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit1_Conv1\Fmap_to_MaxPool")
+    # list_to_file(p_tile, o_dst_root / f"row_ZZZ.txt")
     # 加入最終輸出的三維陣列
     o_tile.insert(0, p_tile)
 
