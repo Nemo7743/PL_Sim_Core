@@ -374,19 +374,19 @@ def ReLU(input_matrix):
 
 
 # =========== 執行運算 ===========
-def DownSamplingL_implementation(features):
+def DownSamplingR_implementation(features):
     # ========== 錯誤檢查 ==========
     if(features != 0 and features != 4 and features != 12):
         print("[錯誤]: 只有 features 0、4、12 需要降採樣，目前偵測到的 features =", features)
         return ["錯爛"]
 
 
-    # ============================== DW ==============================
+    # ============================== PW ==============================
     # ========== 參數設定 ==========
     fmap_num = 32
     weight_num = 24
     bias_num = 24
-    stride = 2
+    stride = 1
 
     # ========== 讀取 Fmap ==========
     f_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit2_MaxPool\Fmap_to_DownSampling0")
@@ -396,7 +396,91 @@ def DownSamplingL_implementation(features):
     '''
 
     # ========== 讀取 Weight ==========
-    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\dw_column_filters") / f"features.{features}.banch1.0"
+    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\pw_column_filters") / f"features.{features}.banch2.0"
+    raw_weight = Load_All_Weight(w_b_src_root, weight_num, need_transpose = False, need_pop = False)
+    # 將三維陣列內部的二維陣列壓為一維陣列
+    w_array = np.array(raw_weight)
+    flattened_w_array = w_array.reshape(w_array.shape[0], -1)
+    weight = flattened_w_array.tolist()
+
+    # ========== 讀取 Bias 並加入 Weight ==========
+    bias = Load_All_Bias(w_b_src_root, bias_num)
+    for i in range(len(bias)):
+        weight[i].insert(0, bias[i])
+    '''
+    weight = [ out_channel ][ b(0), w(1:) ]
+    '''
+    
+    # 初始化最終回傳的三維陣列
+    o_tile = []
+    '''
+    o_tile = [ 第幾個Tile ][ channel ][ w ]
+    '''
+
+    for i in range(0, fmap_num, stride):
+        #print(i, i+1, i+2)
+        output_Dec_neet_transpose = []
+
+        for j in range(0, weight_num, 4):
+            #print(j, j+1, j+2, j+3)
+            # ========== 進行運算並把運算結果 concat ==========
+            output_Dec_neet_transpose = output_Dec_neet_transpose + PW_Sim.PW(fmap[i], weight[j+0 : j+4], stride, False)
+        
+        # ========== ReLU ========== PW需要
+        output_Dec_neet_transpose = ReLU(output_Dec_neet_transpose)
+
+        # ========== 資料處理及記錄 ==========
+        # 進位轉換
+        output_Hex_need_tranpose = []
+        '''
+        output_Hex_need_tranpose = [ channel ][ w ]
+        '''
+        for k in range(0, len(output_Dec_neet_transpose), 1):
+            output_Hex_need_tranpose.append(DecToHex(output_Dec_neet_transpose[k]))
+        # 轉置(等所有 Channel 都 concat 完，才轉置)
+        output_Hex = transpose_list(output_Hex_need_tranpose, False)
+        # 不 儲存運算結果
+        # o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit3.2_DownSamplingL\Fmap_to_ChannelShuffle")
+        # list_to_file(output_Hex, o_dst_root / f"row_{(i//stride):03d}.txt")
+        # 加入最終輸出的三維陣列
+        o_tile.append(output_Hex)
+
+    # ========== 加入 Padding Tile (頭尾都加) ==========
+    p_tile = []
+    for i in range(len(output_Hex)):
+        inn_p_tile = []
+        for j in range(len(output_Hex[i])):
+            inn_p_tile.append("0000")
+        p_tile.append(inn_p_tile)
+    # 儲存 Padding Tile
+    o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit3.1_DownSamplingL\Fmap_to_ChannelShuffle")
+    list_to_file(p_tile, o_dst_root / f"row_ZZZ.txt")
+    # 加入最終輸出的三維陣列
+    o_tile.insert(0, p_tile) # 頭
+    o_tile.append(p_tile) # 尾
+
+
+    # ============================== DW ==============================
+    # ========== 參數設定 ==========
+    fmap_num = 32
+    weight_num = 24
+    bias_num = 24
+    stride = 2
+
+    # ========== 讀取 Fmap ========== 不需要讀，但也不能直接接
+    fmap = []
+    buffer_3D_lst = o_tile
+    buffer_2D_lst = []
+    for i in range(len(buffer_3D_lst)):
+        buffer_2D_lst = transpose_list(buffer_3D_lst[i])
+        buffer_2D_lst = HexToDec(buffer_2D_lst)
+        fmap.append(buffer_2D_lst)
+    '''
+    famp = [ 第幾個Fmap ][ channel ][ w ]
+    '''
+
+    # ========== 讀取 Weight ==========
+    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\dw_column_filters") / f"features.{features}.banch2.3"
     raw_weight = Load_All_Weight(w_b_src_root, weight_num, need_transpose = True, need_pop = True)
     # 將三維陣列內部的二維陣列壓為一維陣列
     w_array = np.array(raw_weight)
@@ -479,7 +563,7 @@ def DownSamplingL_implementation(features):
     '''
 
     # ========== 讀取 Weight ==========
-    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\pw_column_filters") / f"features.{features}.banch1.2"
+    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\pw_column_filters") / f"features.{features}.banch2.5"
     raw_weight = Load_All_Weight(w_b_src_root, weight_num, need_transpose = False, need_pop = False)
     # 將三維陣列內部的二維陣列壓為一維陣列
     w_array = np.array(raw_weight)
@@ -523,7 +607,7 @@ def DownSamplingL_implementation(features):
         # 轉置(等所有 Channel 都 concat 完，才轉置)
         output_Hex = transpose_list(output_Hex_need_tranpose, False)
         # 儲存運算結果
-        o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit3.1_DownSamplingL\Fmap_to_ChannelShuffle")
+        o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit3.2_DownSamplingR\Fmap_to_ChannelShuffle")
         list_to_file(output_Hex, o_dst_root / f"row_{(i//stride):03d}.txt")
         # 加入最終輸出的三維陣列
         o_tile.append(output_Hex)
@@ -536,7 +620,7 @@ def DownSamplingL_implementation(features):
             inn_p_tile.append("0000")
         p_tile.append(inn_p_tile)
     # 儲存 Padding Tile
-    o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit3.1_DownSamplingL\Fmap_to_ChannelShuffle")
+    o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit3.2_DownSamplingR\Fmap_to_ChannelShuffle")
     list_to_file(p_tile, o_dst_root / f"row_ZZZ.txt")
     # 加入最終輸出的三維陣列
     o_tile.insert(0, p_tile)
@@ -545,4 +629,4 @@ def DownSamplingL_implementation(features):
     
 
 if __name__ == "__main__":
-    DownSamplingL_implementation(0)
+    DownSamplingR_implementation(0)
