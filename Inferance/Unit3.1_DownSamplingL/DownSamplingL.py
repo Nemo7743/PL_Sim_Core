@@ -303,7 +303,7 @@ def Load_All_Weight(w_src_root, need_transpose = False):
     '''
     1. 讀取檔案成為二維陣列
     2. 將 padding pop 掉
-    3. 將二維陣列轉置
+    3. 將二維陣列轉置 (看情況)
     4. 將字串以 16 進位的 Q8.8 轉換為 10 進位數字
     5. 附加在 weight 這個三維陣列上
     '''
@@ -316,7 +316,7 @@ def Load_All_Weight(w_src_root, need_transpose = False):
         for j in range(len(buffer_2D_lst)):
             buffer_2D_lst[j].pop()
 
-        if(need_transpose): buffer_2D_lst = transpose_list(buffer_2D_lst) #視需求對讀取的權重轉置
+        if(need_transpose): buffer_2D_lst = transpose_list(buffer_2D_lst) # 視需求對讀取的權重轉置
         buffer_2D_lst = HexToDec(buffer_2D_lst)
 
         weight.append(buffer_2D_lst)
@@ -371,9 +371,14 @@ def ReLU(input_matrix):
     return [[max(0, x) for x in row] for row in input_matrix]
 
 # =========== 執行運算 ===========
-def DownSamplingL_implementation():
-    # ==================== DW ====================
+def DownSamplingL_implementation(features):
+    # ========== 錯誤檢查 ==========
+    if(features != 0 and features != 4 and features != 12):
+        print("[錯誤]: 只有 features 0、4、12 需要降採樣，目前偵測到的 features =", features)
+        return ["錯爛"]
 
+
+    # ============================== DW ==============================
     # ========== 讀取 Fmap ==========
     f_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit2_MaxPool\Fmap_to_DownSampling0")
     fmap = Load_All_Fmap(f_src_root)
@@ -382,7 +387,7 @@ def DownSamplingL_implementation():
     '''
 
     # ========== 讀取 Weight ==========
-    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\conv1_column_filters")
+    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\dw_column_filters") / f"features.{features}.banch1.0"
     raw_weight = Load_All_Weight(w_b_src_root)
     # 將三維陣列內部的二維陣列壓為一維陣列
     w_array = np.array(raw_weight)
@@ -393,6 +398,9 @@ def DownSamplingL_implementation():
     bias = Load_All_Bias(w_b_src_root)
     for i in range(len(bias)):
         weight[i].insert(0, bias[i])
+    '''
+    weight = [ out_channel ][ b(0), w(1:) ]
+    '''
 
     
     # 初始化最終回傳的三維陣列
