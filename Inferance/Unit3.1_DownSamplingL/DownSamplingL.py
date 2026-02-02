@@ -282,7 +282,7 @@ def Load_All_Fmap(f_src_root):
 
 
 # ========== 讀取Weight ==========
-def Load_All_Weight(w_src_root):
+def Load_All_Weight(w_src_root, need_transpose = False):
     weight = []
     '''
     weight 資料結構 = 
@@ -316,7 +316,7 @@ def Load_All_Weight(w_src_root):
         for j in range(len(buffer_2D_lst)):
             buffer_2D_lst[j].pop()
 
-        #buffer_2D_lst = transpose_list(buffer_2D_lst) # 權重不需要轉置
+        if(need_transpose): buffer_2D_lst = transpose_list(buffer_2D_lst) #視需求對讀取的權重轉置
         buffer_2D_lst = HexToDec(buffer_2D_lst)
 
         weight.append(buffer_2D_lst)
