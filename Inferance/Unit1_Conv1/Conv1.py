@@ -241,7 +241,7 @@ def DecToHex(dec_input):
 
 
 # ========= 讀取Fmap ==========
-def Load_All_Fmap(f_src_root):
+def Load_All_Fmap(f_src_root, fmap_num):
 
     fmap = []
     '''
@@ -275,7 +275,7 @@ def Load_All_Fmap(f_src_root):
 
 
     # 讀取普通 Fmap
-    for i in range(0, 128, 1):
+    for i in range(0, fmap_num, 1):
         buffer_2D_lst = file_to_list(f_src_root / f"row_{i:03d}.txt")
         buffer_2D_lst = transpose_list(buffer_2D_lst)
         buffer_2D_lst = HexToDec(buffer_2D_lst)
@@ -284,7 +284,7 @@ def Load_All_Fmap(f_src_root):
 
 
 # ========== 讀取Weight ==========
-def Load_All_Weight(w_src_root):
+def Load_All_Weight(w_src_root, weight_num, need_transpose = False):
     weight = []
     '''
     weight 資料結構 = 
@@ -305,20 +305,20 @@ def Load_All_Weight(w_src_root):
     '''
     1. 讀取檔案成為二維陣列
     2. 將 padding pop 掉
-    3. 將二維陣列轉置
+    3. 將二維陣列轉置 (看情況)
     4. 將字串以 16 進位的 Q8.8 轉換為 10 進位數字
     5. 附加在 weight 這個三維陣列上
     '''
 
     # 讀取普通 Weight
-    for i in range(0, 24, 1):
+    for i in range(0, weight_num, 1):
         buffer_2D_lst = file_to_list(w_src_root / f"Filter{i}.txt")
 
         # 將讀取到的 padding 刪除 (權重原始檔為了符合硬體運算，所以有加 padding，如：0123 4567 89AB 0000)
         for j in range(len(buffer_2D_lst)):
             buffer_2D_lst[j].pop()
 
-        #buffer_2D_lst = transpose_list(buffer_2D_lst) # 權重不需要轉置
+        if(need_transpose): buffer_2D_lst = transpose_list(buffer_2D_lst) # 視需求對讀取的權重轉置
         buffer_2D_lst = HexToDec(buffer_2D_lst)
 
         weight.append(buffer_2D_lst)
@@ -326,7 +326,7 @@ def Load_All_Weight(w_src_root):
 
 
 # ========== 讀取Bias ==========
-def Load_All_Bias(b_src_root):
+def Load_All_Bias(b_src_root, bias_num):
     bias = []
     '''
     bias 資料結構 = 
@@ -352,7 +352,7 @@ def Load_All_Bias(b_src_root):
     '''
 
     # 讀取普通 bias
-    for i in range(0, 24, 1):
+    for i in range(0, bias_num, 1):
         with open(b_src_root / f"Bias{i}.txt", 'r', encoding='utf-8') as b:
             buffer_2D_lst.append(b.read())
 
@@ -374,23 +374,28 @@ def ReLU(input_matrix):
 
 # =========== 執行運算 ===========
 def Conv1_implementation():
+    # ========== 參數設定 ==========
+    fmap_num = 128
+    weight_num = 24
+    bias_num = 24
+
     # ========== 讀取 Fmap ==========
     f_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit0_Preprocessing\Fmap_to_Conv1")
-    fmap = Load_All_Fmap(f_src_root)
+    fmap = Load_All_Fmap(f_src_root, fmap_num)
     '''
     famp = [ 第幾個Fmap ][ channel ][ w ]
     '''
 
     # ========== 讀取 Weight ==========
     w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\conv1_column_filters")
-    raw_weight = Load_All_Weight(w_b_src_root)
+    raw_weight = Load_All_Weight(w_b_src_root, weight_num, False)
     # 將三維陣列內部的二維陣列壓為一維陣列
     w_array = np.array(raw_weight)
     flattened_w_array = w_array.reshape(w_array.shape[0], -1)
     weight = flattened_w_array.tolist()
 
     # ========== 讀取 Bias 並加入 Weight ==========
-    bias = Load_All_Bias(w_b_src_root)
+    bias = Load_All_Bias(w_b_src_root, bias_num)
     for i in range(len(bias)):
         weight[i].insert(0, bias[i])
 

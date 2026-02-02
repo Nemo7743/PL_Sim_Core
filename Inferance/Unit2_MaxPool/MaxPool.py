@@ -237,7 +237,7 @@ def DecToHex(dec_input):
 
 
 # ========= 讀取Fmap ==========
-def Load_All_Fmap(f_src_root):
+def Load_All_Fmap(f_src_root, fmap_num):
 
     fmap = []
     '''
@@ -271,17 +271,22 @@ def Load_All_Fmap(f_src_root):
 
 
     # 讀取普通 Fmap
-    for i in range(0, 64, 1):
+    for i in range(0, fmap_num, 1):
         buffer_2D_lst = file_to_list(f_src_root / f"row_{i:03d}.txt")
         buffer_2D_lst = transpose_list(buffer_2D_lst)
         buffer_2D_lst = HexToDec(buffer_2D_lst)
         fmap.append(buffer_2D_lst)
     return fmap
 
+
+# ========== 進行計算 ==========
 def MaxPool_implementation():
+    # ========== 參數設定 ==========
+    fmap_num = 64
+
     # ========== 讀取 Fmap ==========
     f_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit1_Conv1\Fmap_to_MaxPool")
-    fmap = Load_All_Fmap(f_src_root)
+    fmap = Load_All_Fmap(f_src_root, fmap_num)
     '''
     famp = [ 第幾個Fmap ][ channel ][ w ]
     '''
