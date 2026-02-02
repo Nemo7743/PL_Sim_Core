@@ -1,7 +1,450 @@
 from pathlib import Path
 import numpy as np
 import DW_Sim
+import PW_Sim
 
 
-# 讀取檔案時記得轉置權重和Fmap
+# ========== 小工具 ==========
+# 轉置txt
+def transpose_txt(input_file, output_file):
+    try:
+        # 1. 讀取檔案
+        with open(input_file, 'r', encoding='utf-8') as f:
+            # 讀取每一行，去除前後空白，並依據空格切割成 list
+            # 使用 if line.strip() 是為了避免讀取到空行
+            matrix = [line.strip().split() for line in f if line.strip()]
 
+        # 檢查是否有資料
+        if not matrix:
+            print("檔案是空的。")
+            return
+
+        # 2. 轉置資料
+        # zip(*matrix) 會將原本的 Row 拆開並重新組合成 Column
+        transposed_matrix = list(zip(*matrix))
+
+        # 3. 寫入新檔案
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for row in transposed_matrix:
+                # 將 tuple 轉回字串，並用空格連接
+                f.write(" ".join(row) + "\n")
+        
+        print(f"[系統]: {input_file} 轉置完成！已儲存至 {output_file}")
+
+    except FileNotFoundError:
+        print(f"找不到檔案：{input_file}")
+    except Exception as e:
+        print(f"發生錯誤：{e}")
+
+# 執行轉置
+#transpose_txt('tile_buffer3.txt', 'tile_buffer3.txt')
+
+# 轉置工具 -- 但是不讀檔案
+def transpose_list(input_matrix, show_detail = False):
+    """
+    將輸入的二維 list 進行轉置 (行列互換)。
+    
+    Args:
+        input_matrix (list): 原始的二維列表 (e.g., [[1, 2], [3, 4]])
+        show_detail (bool): 是否顯示除錯/系統訊息
+        
+    Returns:
+        list: 轉置後的二維列表，若出錯或為空則回傳空 list
+    """
+    try:
+        # 1. 檢查資料有效性
+        if not input_matrix:
+            if show_detail:
+                print("輸入的 List 是空的。")
+            return []
+            
+        # 額外檢查：確保輸入確實是 list 類型
+        if not isinstance(input_matrix, list):
+            if show_detail: 
+                print("錯誤：輸入資料必須是 List。")
+            return []
+
+        # 2. 轉置資料
+        # zip(*matrix) 會將原本的 Row 拆開並重新組合成 Column (Tuple 形式)
+        # 這裡使用 list() 將其轉回列表形式，保持結構一致為 list of lists
+        transposed_matrix = [list(row) for row in zip(*input_matrix)]
+
+        # 3. 輸出訊息
+        if show_detail:
+            # 取得原始維度與新維度供參考
+            rows = len(input_matrix)
+            cols = len(input_matrix[0]) if rows > 0 else 0
+            new_rows = len(transposed_matrix)
+            new_cols = len(transposed_matrix[0]) if new_rows > 0 else 0
+            
+            print(f"[系統]: 資料轉置完成！")
+            print(f"       原始維度: {rows}x{cols} -> 新維度: {new_rows}x{new_cols}")
+
+        return transposed_matrix
+
+    except TypeError as e:
+        print(f"類型錯誤 (可能是輸入了非矩陣格式的 List)：{e}")
+        return []
+    except Exception as e:
+        print(f"發生錯誤：{e}")
+        return []
+    
+# 把檔案讀取成二維陣列，方便轉換
+def file_to_list(file_path, show_detail=False):
+    """
+    讀取文字檔並轉換為二維列表 (List of Lists)。
+    以換行區分 Row，以空白區分 Column。
+
+    Args:
+        file_path (str): 檔案路徑
+        show_detail (bool): 是否顯示讀取資訊
+
+    Returns:
+        list: 讀取後的二維列表，若檔案不存在或出錯回傳空 list
+    """
+    matrix = []
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                # 1. strip() 會移除字串頭尾的空白與換行符號 (\n)
+                # 2. 如果 strip() 後是空字串 (例如文件尾端的空行)，則跳過不處理
+                if line.strip():
+                    # 預設 split() 會以任何空白字元 (空格、Tab) 切割
+                    matrix.append(line.strip().split())
+
+        if show_detail:
+            rows = len(matrix)
+            cols = len(matrix[0]) if rows > 0 else 0
+            print(f"[系統]: 檔案讀取成功！路徑: {file_path}")
+            print(f"       讀入維度: {rows} 列 x  {cols} 行")
+
+        return matrix
+
+    except FileNotFoundError:
+        print(f"錯誤：找不到檔案 {file_path}")
+        return []
+    except Exception as e:
+        print(f"讀取檔案發生錯誤：{e}")
+        return []
+    
+'''
+tile_buffer0 = file_to_list("./data/tile_buffer1.txt", True)
+print("tets matrix:\n", tile_buffer0)
+tile_buffer0 = transpose_list(tile_buffer0, True)
+print("\n")
+print("tets matrix:\n", tile_buffer0)
+'''
+
+# 將二維運算結果寫入檔案
+def list_to_file(array_2d, filename, show_detail=False):
+    """
+    將二維陣列儲存為 txt 檔案。
+    格式：元素間以空格隔開，列與列之間換行。
+    
+    參數:
+    array_2d (list): 二維陣列 (List of Lists)
+    filename (str): 檔案名稱 (包含路徑與副檔名，如 'output.txt')
+    """
+    try:
+        with open(filename, 'w', encoding='utf-8') as f:
+            for row in array_2d:
+                # 1. map(str, row): 將列中的每個元素 (如數字) 強制轉為字串
+                # 2. ' '.join(...): 將這些字串用空格連接起來
+                # 3. f.write(...\n): 寫入檔案並加上換行符號
+                f.write(' '.join(map(str, row)) + '\n')
+        if(show_detail):
+            print(f"成功將二維陣列儲存至: {filename}")
+    except IOError as e:
+        print(f"檔案寫入錯誤: {e}")
+
+# ======== Hex to Dec ======== (Q8.8) (2D list)
+def HexToDec(hex_input):
+    scale_factor = 256.0
+    dec_output = []
+    
+    # [新增] 外層迴圈：遍歷每一列 (Row)
+    for row in hex_input:
+        current_row_dec = []  # 暫存當前這一列的結果
+
+        # [原本的迴圈] 現在改為遍歷 row 中的每個 hex_str
+        for hex_str in row:
+            # 轉成 Raw Integer (0 ~ 65535)
+            raw_val = int(hex_str, 16)
+
+            # 處理 Sign Bit (二補數轉換)
+            # 如果第 15 bit 是 1 (即 >= 0x8000)，代表是負數
+            if raw_val & 0x8000:
+                signed_val = raw_val - 0x10000
+            else:
+                signed_val = raw_val
+            
+            # 轉成浮點數
+            # [修改] 將結果加入當前的列 list
+            current_row_dec.append(signed_val / scale_factor)
+        
+        # [新增] 將處理完的一整列加入最終輸出
+        dec_output.append(current_row_dec)
+        
+    return dec_output
+
+# ======== Hex to Dec ======== (Q16.16) (1D list)
+def HexToDec_Q16_16(hex_input):
+    # Q16.16 表示有 16 個小數位
+    # Scale Factor = 2^16 = 65536.0
+    scale_factor = 65536.0
+    
+    dec_output = []
+    for hex_str in hex_input:
+        # 轉成 Raw Integer (32-bit 範圍: 0 ~ 4294967295)
+        raw_val = int(hex_str, 16)
+
+        # 處理 Sign Bit (32-bit 二補數轉換)
+        # Q16.16 是 32-bit 格式，MSB 是第 31 bit (即 >= 0x80000000)
+        if raw_val & 0x80000000:
+            # 若為負數，減去 2^32 (0x100000000)
+            signed_val = raw_val - 0x100000000
+        else:
+            signed_val = raw_val
+        
+        # 轉成浮點數
+        dec_output.append(signed_val / scale_factor)
+        
+    return dec_output
+
+# ======== Dec to Hec ======== (Q8.8) (1D List)
+def DecToHex(dec_input):
+    hex_output = []
+    scale_factor = 256.0
+    
+    # Q8.8 (Signed 16-bit) 的整數範圍限制
+    MAX_VAL = 32767   # 0x7FFF
+    MIN_VAL = -32768  # 0x8000
+
+    for val in dec_input:
+        # 轉換為固定點數整數 (乘上 2^8 並四捨五入)
+        int_val = int(round(val * scale_factor))
+
+        # 飽和截斷
+        # 若超過表示範圍，強制鎖定在最大或最小值
+        if int_val > MAX_VAL:
+            int_val = MAX_VAL
+        elif int_val < MIN_VAL:
+            int_val = MIN_VAL
+
+        # 轉回 Hex 字串 (處理負數顯示 & 0xFFFF)
+        hex_output.append(f"{int_val & 0xFFFF:04X}")
+
+    return hex_output
+
+
+
+# ========= 讀取Fmap ==========
+def Load_All_Fmap(f_src_root):
+
+    fmap = []
+    '''
+    fmap 資料結構 = 
+    [
+    [fmap zzz (二維)]
+    [fmap 001 (二維)]
+    [fmap 002 (二維)]
+    ...
+    [fmap 126 (二維)]
+    [fmap 127 (二維)]
+    ]
+    '''
+
+    buffer_2D_lst = []
+
+    # ========== 讀取檔案並轉置 ==========
+    # 雖然是可以用一行就解決掉，但我覺得這樣可讀性就差了點
+    '''
+    1. 讀取檔案成為二維陣列
+    2. 將二維陣列轉置
+    3. 將字串以 16 進位的 Q8.8 轉換為 10 進位數字
+    4. 附加在 fmap 這個三維陣列上
+    '''
+
+    # padding
+    buffer_2D_lst = file_to_list(f_src_root / "row_ZZZ.txt")
+    buffer_2D_lst = transpose_list(buffer_2D_lst)
+    buffer_2D_lst = HexToDec(buffer_2D_lst)
+    fmap.append(buffer_2D_lst)
+
+
+    # 讀取普通 Fmap
+    for i in range(0, 128, 1):
+        buffer_2D_lst = file_to_list(f_src_root / f"row_{i:03d}.txt")
+        buffer_2D_lst = transpose_list(buffer_2D_lst)
+        buffer_2D_lst = HexToDec(buffer_2D_lst)
+        fmap.append(buffer_2D_lst)
+    return fmap
+
+
+# ========== 讀取Weight ==========
+def Load_All_Weight(w_src_root):
+    weight = []
+    '''
+    weight 資料結構 = 
+    [
+    [Filter0 (二維)]
+    [Filter1 (二維)]
+    [Filter2 (二維)]
+    ...
+    [Filter22 (二維)]
+    [Filter23 (二維)]
+    ]
+    '''
+
+    buffer_2D_lst = []
+
+    # ========== 讀取檔案並轉置 ==========
+    # 雖然是可以用一行就解決掉，但我覺得這樣可讀性就差了點
+    '''
+    1. 讀取檔案成為二維陣列
+    2. 將 padding pop 掉
+    3. 將二維陣列轉置
+    4. 將字串以 16 進位的 Q8.8 轉換為 10 進位數字
+    5. 附加在 weight 這個三維陣列上
+    '''
+
+    # 讀取普通 Weight
+    for i in range(0, 24, 1):
+        buffer_2D_lst = file_to_list(w_src_root / f"Filter{i}.txt")
+
+        # 將讀取到的 padding 刪除 (權重原始檔為了符合硬體運算，所以有加 padding，如：0123 4567 89AB 0000)
+        for j in range(len(buffer_2D_lst)):
+            buffer_2D_lst[j].pop()
+
+        #buffer_2D_lst = transpose_list(buffer_2D_lst) # 權重不需要轉置
+        buffer_2D_lst = HexToDec(buffer_2D_lst)
+
+        weight.append(buffer_2D_lst)
+    return weight
+
+
+# ========== 讀取Bias ==========
+def Load_All_Bias(b_src_root):
+    bias = []
+    '''
+    bias 資料結構 = 
+    [
+    bias0
+    bias1
+    bias2
+    ...
+    bias22
+    bias23
+    ]
+    '''
+
+    buffer_2D_lst = []
+
+    # ========== 讀取檔案 ==========
+    '''
+    1. 讀取檔案成為二維陣列
+    2. 將 padding pop 掉
+    3. 將二維陣列轉置
+    4. 將字串以 16 進位的 Q8.8 轉換為 10 進位數字
+    5. 附加在 bias 這個三維陣列上
+    '''
+
+    # 讀取普通 bias
+    for i in range(0, 24, 1):
+        with open(b_src_root / f"Bias{i}.txt", 'r', encoding='utf-8') as b:
+            buffer_2D_lst.append(b.read())
+
+    bias = HexToDec_Q16_16(buffer_2D_lst)
+    return bias
+
+# ========== ReLU ==========
+def ReLU(input_matrix):
+    """
+    使用純 Python 列表生成式進行 ReLU 運算。
+    
+    參數:
+        input_matrix (list of lists): 輸入的二維列表
+    回傳:
+        list of lists: 經過 ReLU 處理後的二維列表
+    """
+    # 遍歷每一列 (row)，再遍歷列中的每一個值 (x)
+    return [[max(0, x) for x in row] for row in input_matrix]
+
+# =========== 執行運算 ===========
+def DownSamplingL_implementation():
+    # ==================== DW ====================
+
+    # ========== 讀取 Fmap ==========
+    f_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit2_MaxPool\Fmap_to_DownSampling0")
+    fmap = Load_All_Fmap(f_src_root)
+    '''
+    famp = [ 第幾個Fmap ][ channel ][ w ]
+    '''
+
+    # ========== 讀取 Weight ==========
+    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\conv1_column_filters")
+    raw_weight = Load_All_Weight(w_b_src_root)
+    # 將三維陣列內部的二維陣列壓為一維陣列
+    w_array = np.array(raw_weight)
+    flattened_w_array = w_array.reshape(w_array.shape[0], -1)
+    weight = flattened_w_array.tolist()
+
+    # ========== 讀取 Bias 並加入 Weight ==========
+    bias = Load_All_Bias(w_b_src_root)
+    for i in range(len(bias)):
+        weight[i].insert(0, bias[i])
+
+    
+    # 初始化最終回傳的三維陣列
+    o_tile = []
+    '''
+    o_tile = [ 第幾個Tile ][ channel ][ w ]
+    '''
+
+    for i in range(0, 128, 2):
+        #print(i, i+1, i+2)
+        output_Dec_neet_transpose = []
+
+        for j in range(0, 24, 4):
+            #print(j, j+1, j+2, j+3)
+            # ========== 進行運算並把運算結果 concat ==========
+            output_Dec_neet_transpose = output_Dec_neet_transpose + Conv1_Sim.Conv1(fmap[i], fmap[i+1], fmap[i+2], weight[j+0 : j+4], 2, False)
+        
+        # ========== ReLU ==========
+        output_Dec_neet_transpose = ReLU(output_Dec_neet_transpose)
+
+        # ========== 資料處理及記錄 ==========
+        # 進位轉換
+        output_Hex_need_tranpose = []
+        '''
+        output_Hex_need_tranpose = [ channel ][ w ]
+        '''
+        for k in range(0, len(output_Dec_neet_transpose), 1):
+            output_Hex_need_tranpose.append(DecToHex(output_Dec_neet_transpose[k]))
+        # 轉置(等所有 Channel 都 concat 完，才轉置)
+        output_Hex = transpose_list(output_Hex_need_tranpose, False)
+        # 儲存運算結果
+        o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit1_Conv1\Fmap_to_MaxPool")
+        list_to_file(output_Hex, o_dst_root / f"row_{(i//2):03d}.txt")
+        # 加入最終輸出的三維陣列
+        o_tile.append(output_Hex)
+
+
+    # ========== 加入 Padding Tile ==========
+    p_tile = []
+    for i in range(len(output_Hex)):
+        inn_p_tile = []
+        for j in range(len(output_Hex[i])):
+            inn_p_tile.append("0000")
+        p_tile.append(inn_p_tile)
+    # 儲存 Padding Tile
+    # o_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit1_Conv1\Fmap_to_MaxPool")
+    # list_to_file(p_tile, o_dst_root / f"row_ZZZ.txt")
+    # 加入最終輸出的三維陣列
+    o_tile.insert(0, p_tile)
+
+    return o_tile
+    
+
+if __name__ == "__main__":
+    DownSamplingL_implementation()
