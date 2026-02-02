@@ -382,7 +382,7 @@ def Conv1_implementation():
     '''
 
     # ========== 讀取 Weight ==========
-    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\組譯器\WeightBiasRearranger\V4\output_data_split\conv1_column_filters")
+    w_b_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Weight_And_Bias\conv1_column_filters")
     raw_weight = Load_All_Weight(w_b_src_root)
     # 將三維陣列內部的二維陣列壓為一維陣列
     w_array = np.array(raw_weight)
