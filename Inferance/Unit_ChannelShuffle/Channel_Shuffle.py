@@ -208,30 +208,45 @@ def HexToDec_Q16_16(hex_input):
         
     return dec_output
 
-# ======== Dec to Hec ======== (Q8.8) (1D List)
-def DecToHex(dec_input):
-    hex_output = []
+# ======== Dec to Hec ======== (Q8.8) (3D List)
+def DecToHex_3D(dec_input_3d):
+    hex_output_3d = []  # 最外層的 3D List
     scale_factor = 256.0
     
     # Q8.8 (Signed 16-bit) 的整數範圍限制
     MAX_VAL = 32767   # 0x7FFF
     MIN_VAL = -32768  # 0x8000
 
-    for val in dec_input:
-        # 轉換為固定點數整數 (乘上 2^8 並四捨五入)
-        int_val = int(round(val * scale_factor))
+    # Layer 1: 遍歷每個 2D Matrix
+    for matrix in dec_input_3d:
+        matrix_output = []
+        
+        # Layer 2: 遍歷每一行 (Row)
+        for row in matrix:
+            row_output = []
+            
+            # Layer 3: 遍歷每個數值 (原本的邏輯)
+            for val in row:
+                # 轉換為固定點數整數 (乘上 2^8 並四捨五入)
+                int_val = int(round(val * scale_factor))
 
-        # 飽和截斷
-        # 若超過表示範圍，強制鎖定在最大或最小值
-        if int_val > MAX_VAL:
-            int_val = MAX_VAL
-        elif int_val < MIN_VAL:
-            int_val = MIN_VAL
+                # 飽和截斷
+                # 若超過表示範圍，強制鎖定在最大或最小值
+                if int_val > MAX_VAL:
+                    int_val = MAX_VAL
+                elif int_val < MIN_VAL:
+                    int_val = MIN_VAL
 
-        # 轉回 Hex 字串 (處理負數顯示 & 0xFFFF)
-        hex_output.append(f"{int_val & 0xFFFF:04X}")
+                # 轉回 Hex 字串 (處理負數顯示 & 0xFFFF)
+                row_output.append(f"{int_val & 0xFFFF:04X}")
+            
+            # 將處理完的一行加入 Matrix
+            matrix_output.append(row_output)
+        
+        # 將處理完的 Matrix 加入 3D List
+        hex_output_3d.append(matrix_output)
 
-    return hex_output
+    return hex_output_3d
 
 
 
@@ -243,8 +258,8 @@ def Load_All_Fmap(f_src_root, fmap_num):
     fmap 資料結構 = 
     [
     [fmap zzz (二維)]
+    [fmap 000 (二維)]
     [fmap 001 (二維)]
-    [fmap 002 (二維)]
     ...
     [fmap 126 (二維)]
     [fmap 127 (二維)]
@@ -278,7 +293,7 @@ def Load_All_Fmap(f_src_root, fmap_num):
     return fmap
 
 
-def ChannelShuffle(features = -1):
+def ChannelShuffle(features = -1, show_detail = False):
     '''
     Docstring for ChannelShuffle
     
@@ -290,11 +305,11 @@ def ChannelShuffle(features = -1):
     elif(features not in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]):
         print("[錯誤]: features 只能是: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]，目前的 features =", features)
     elif(features in [0, 1, 2, 3]):
-        fmap_num = 32
-    elif(features in [4, 5, 6, 7, 8, 9, 10, 11]):
         fmap_num = 16
-    elif(features in [12, 13, 14, 15]):
+    elif(features in [4, 5, 6, 7, 8, 9, 10, 11]):
         fmap_num = 8
+    elif(features in [12, 13, 14, 15]):
+        fmap_num = 4
 
     # ========== 狀態分類 ========== 降採樣 / 普通計算
     if(features in [0, 4, 12]):
@@ -303,17 +318,144 @@ def ChannelShuffle(features = -1):
         is_down_sampling = False
 
 
-    # ========== 讀取 Fmap ==========
+    # ========== 讀取 Fmap ( 左分支 ) ==========
     if(is_down_sampling):
         fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.1_DownSamplingL" / Path(r"Fmap_to_ChannelShuffle")
     else:
-        fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_OG_Calculate")
+        fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_Next_CalculateL")
 
-    fmapL = Load_All_Fmap(fmapL_src_root, fmap_num//2)
+    fmapL = Load_All_Fmap(fmapL_src_root, fmap_num)
+    if(show_detail): print("fmaps of fmapL ( including padding ) =", len(fmapL))
 
     
 
-    fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.1_OG_Calculate" / Path(r"Fmap_to_ChannelShuffle")
+    # ========== 讀取 Fmap ( 右分支 ) ==========
+    if(is_down_sampling):
+        fmapR_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.2_DownSamplingR" / Path(r"Fmap_to_ChannelShuffle")
+    else:
+        fmapR_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.2_OG_Calculate" / Path(r"Fmap_to_ChannelShuffle")
+
+    fmapR = Load_All_Fmap(fmapR_src_root, fmap_num)
+    if(show_detail): print("fmaps of fmapR ( including padding ) =", len(fmapR))
 
 
-# C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_OG_Calculate
+    # ========== 執行 Channel Concat ==========
+    concated_fmap = []
+    '''
+    concated_fmap 資料結構 = 
+    [
+    [fmap 000 (二維)]
+    [fmap 001 (二維)]
+    ...
+    [fmap ???-1 (二維)]
+    [fmap ??? (二維)]
+    ]
+    '''
+
+    # 進行 Concat
+    for i in range(0, fmap_num):
+        buffer_2d_lst = []
+
+        for j in range(len(fmapL[i+1])):
+            buffer_2d_lst.append(fmapL[i+1][j])
+        
+        for j in range(len(fmapR[i+1])):
+            buffer_2d_lst.append(fmapR[i+1][j])
+        
+        concated_fmap.append(buffer_2d_lst)
+
+    if(show_detail): print("Total fmap num after concat =", len(concated_fmap))
+    if(show_detail): print("Total channel num after concat =", len(concated_fmap[1]))
+
+
+
+    # ========== 執行 Channel Shuffle ==========
+    shuffled_fmap = []
+    '''
+    shuffled_fmap 資料結構 = 
+    [
+    [fmap zzz (二維)]
+    [fmap 000 (二維)]
+    [fmap 001 (二維)]
+    ...
+    [fmap ???-1 (二維)]
+    [fmap ??? (二維)]
+    ]
+    '''
+
+    for i in range(fmap_num):
+        buffer_2d_lst = []
+
+        if(show_detail): print(f"\nshuffling fmap num: {i}")
+        for j in range(len(concated_fmap[i])//2):
+            buffer_2d_lst.append(concated_fmap[i][j])
+            buffer_2d_lst.append(concated_fmap[i][ len(concated_fmap[i])//2 + j ])
+
+            if(show_detail): 
+                print(f"channel index: {j}")
+                print(f"channel index: {len(concated_fmap[i])//2 + j}")
+
+        shuffled_fmap.append(buffer_2d_lst)
+    
+    if(show_detail): 
+        print("Total fmap num after shuffle =", len(shuffled_fmap))
+        print("Total channel num after shuffle =", len(shuffled_fmap[0]))
+
+
+    # ========== 執行 Channel Split ==========
+    # 偷算參數
+    total_channels = len(shuffled_fmap[0])
+
+    # 初始化
+    fmapL = []
+    fmapR = []
+
+    # 進行 Channel Split
+    for i in range(fmap_num):
+        buffer_2d_lst_L = []
+        buffer_2d_lst_R = []
+
+        for j in range(total_channels//2):
+            buffer_2d_lst_L.append(shuffled_fmap[i][j])
+            buffer_2d_lst_R.append(shuffled_fmap[i][j + total_channels//2])
+        
+        fmapL.append(buffer_2d_lst_L)
+        fmapR.append(buffer_2d_lst_R)
+
+    # 進行轉置
+    for i in range(len(fmapL)):
+        fmapL[i] = transpose_list(fmapL[i], False)
+        fmapR[i] = transpose_list(fmapR[i], False)
+    
+    # 傳換成字串( 表示16進制數字 ) 
+    fmapL = DecToHex_3D(fmapL)
+    fmapR = DecToHex_3D(fmapR)
+
+    # 進行 Padding: 加入 Padding Tile
+    p_tile = []
+    for i in range(len(fmapL[0])):
+        inn_p_tile = []
+        for j in range(len(fmapL[0][i])):
+            inn_p_tile.append("0000")
+        p_tile.append(inn_p_tile)
+    # 加入三維陣列
+    fmapL.insert(0, p_tile)
+    fmapR.insert(0, p_tile)
+
+    # ========== 儲存左右分支 ==========
+    L_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_Next_CalculateL")
+    R_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_Next_CalculateR")
+
+    for i in range(len(fmapL)):
+        if(i == 0):
+            list_to_file(fmapL[i], L_dst_root / f"row_ZZZ.txt")
+            list_to_file(fmapR[i], R_dst_root / f"row_ZZZ.txt")
+        else:
+            list_to_file(fmapL[i], L_dst_root / f"row_{((i-1)):03d}.txt")
+            list_to_file(fmapR[i], R_dst_root / f"row_{((i-1)):03d}.txt")
+
+    
+    return fmapL, fmapR
+
+if __name__ == "__main__":
+    ChannelShuffle(0, False)
