@@ -284,7 +284,7 @@ def ChannelShuffle(features = -1):
     
     :param features: 表示這層 ChannelShuffle 是在 Shuffle 哪一個 FeatureMap
     '''
-    # ========== 參數檢查 ==========
+    # ========== 參數檢查並設定常數( "總" Fmap 數量 ) ==========
     if(features == -1):
         print("[錯誤]: features 參數不能是 -1 或留白，只能是: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]")
     elif(features not in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]):
@@ -296,17 +296,24 @@ def ChannelShuffle(features = -1):
     elif(features in [12, 13, 14, 15]):
         fmap_num = 8
 
-    # ========== 狀態分類 ==========
+    # ========== 狀態分類 ========== 降採樣 / 普通計算
     if(features in [0, 4, 12]):
         is_down_sampling = True
     else:
         is_down_sampling = False
 
 
+    # ========== 讀取 Fmap ==========
     if(is_down_sampling):
-        fmapL_src_root_front = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance")/ f"Unit{features+3}.1_DownSamplingL" / Path(r"Fmap_to_ChannelShuffle")
+        fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.1_DownSamplingL" / Path(r"Fmap_to_ChannelShuffle")
     else:
-        fmapL_src_root_front = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance")/ f"Unit{features+3}.1_OG_" / Path(r"Fmap_to_ChannelShuffle")
+        fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_OG_Calculate")
+
+    fmapL = Load_All_Fmap(fmapL_src_root, fmap_num//2)
 
     
-    Load_All_Fmap
+
+    fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.1_OG_Calculate" / Path(r"Fmap_to_ChannelShuffle")
+
+
+# C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_OG_Calculate
