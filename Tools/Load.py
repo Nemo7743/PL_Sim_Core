@@ -76,7 +76,7 @@ dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Too
 shutil.copy2(src_path, dst_path)
 
 #PW Fmap
-src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\PW_Sim\data\tile_buffer1.txt' 
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\PW_Sim\data\tile_buffer1_splitted.txt' 
 dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\PW\tile_buffer1.txt'
 shutil.copy2(src_path, dst_path)
 
@@ -144,7 +144,7 @@ dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Too
 shutil.copy2(src_path, dst_path)
 
 #ConvLast Fmap
-src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\ConvLast_Sim\data\tile_buffer1.txt' 
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\ConvLast_Sim\data\tile_buffer1_splitted.txt' 
 dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\ConvLast\tile_buffer1.txt'
 shutil.copy2(src_path, dst_path)
 
@@ -220,16 +220,16 @@ shutil.copy2(src_path, dst_path)
 
 # ========== GlbAvgPool ==========
 #GlbAvgPool Fmap
-src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer1.txt' 
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer1_splitted.txt' 
 dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\GlbAvgPool\tile_buffer1.txt'
 shutil.copy2(src_path, dst_path)
-src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer2.txt' 
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer2_splitted.txt' 
 dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\GlbAvgPool\tile_buffer2.txt'
 shutil.copy2(src_path, dst_path)
-src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer3.txt' 
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer3_splitted.txt' 
 dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\GlbAvgPool\tile_buffer3.txt'
 shutil.copy2(src_path, dst_path)
-src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer4.txt' 
+src_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer4_splitted.txt' 
 dst_path = r'C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Tools\Raw_W\GlbAvgPool\tile_buffer4.txt'
 shutil.copy2(src_path, dst_path)
 

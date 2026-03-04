@@ -106,7 +106,7 @@ def DecToHex(dec_input):
 
 
 # ======== 讀取檔案 -- 確認通道數用 ========
-def channel_check(tile0 = None, tile1 = None, tile2 = None):
+def channel_check(tile0 = None, tile1 = None, tile2 = None, show_detail = False):
 
     channel_tile0_amount = len(tile0)
     channel_tile1_amount = len(tile1)
@@ -118,7 +118,7 @@ def channel_check(tile0 = None, tile1 = None, tile2 = None):
         channel_amount = channel_tile0_amount
         tile_w = len(tile0[0])
         if(tile_w%2 == 0):# W 為偶數，沒問題
-            print("[通過]: 通道檢查通過，無錯誤，夯")
+            if(show_detail): print("[通過]: 通道檢查通過，無錯誤，夯")
             return channel_amount, tile_w
         else:
             print("[錯誤]: W 不應該為奇數，你個SB")
@@ -278,7 +278,7 @@ def MaxPool(tile0, tile1, tile2, stride, show_detail):
     if(show_detail):
         print("\n\n====================")
         print("[系統]: 執行通道數檢查")
-    channel_amount, tile_w = channel_check(tile0, tile1, tile2)
+    channel_amount, tile_w = channel_check(tile0, tile1, tile2, show_detail)
 
     # ======== 展示當前運算的 Fmap ========
     # ==== tile ====
@@ -331,7 +331,7 @@ def MaxPool(tile0, tile1, tile2, stride, show_detail):
         print("output( Q8.8  ) =", hex_output)
         print("\n")
 
-    print("[完成]: MaxPool 運算完成")
+    if(show_detail): print("[完成]: MaxPool 運算完成")
     return output
 
 if __name__ == "__main__":

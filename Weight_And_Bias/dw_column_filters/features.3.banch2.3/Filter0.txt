@@ -1,3 +1,3 @@
-ffff ff6b 0015 0000
-ffbe 007c ff05 0000
-ffd5 ff67 ffc6 0000
+fffa ff83 000e 0000
+ffc5 0066 ff32 0000
+ffdc ff85 ffd1 0000

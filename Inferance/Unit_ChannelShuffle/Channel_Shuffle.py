@@ -320,7 +320,7 @@ def ChannelShuffle(features = -1, show_detail = False):
 
     # ========== 讀取 Fmap ( 左分支 ) ==========
     if(is_down_sampling):
-        fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.1_DownSamplingL" / Path(r"Fmap_to_ChannelShuffle")
+        fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}_1_DownSamplingL" / Path(r"Fmap_to_ChannelShuffle")
     else:
         fmapL_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_Next_CalculateL")
 
@@ -331,9 +331,9 @@ def ChannelShuffle(features = -1, show_detail = False):
 
     # ========== 讀取 Fmap ( 右分支 ) ==========
     if(is_down_sampling):
-        fmapR_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.2_DownSamplingR" / Path(r"Fmap_to_ChannelShuffle")
+        fmapR_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}_2_DownSamplingR" / Path(r"Fmap_to_ChannelShuffle")
     else:
-        fmapR_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}.2_OG_Calculate" / Path(r"Fmap_to_ChannelShuffle")
+        fmapR_src_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance") / f"Unit{features+3}_2_OG_Calculate" / Path(r"Fmap_to_ChannelShuffle")
 
     fmapR = Load_All_Fmap(fmapR_src_root, fmap_num)
     if(show_detail): print("fmaps of fmapR ( including padding ) =", len(fmapR))
@@ -446,13 +446,14 @@ def ChannelShuffle(features = -1, show_detail = False):
     L_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_Next_CalculateL")
     R_dst_root = Path(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Inferance\Unit_ChannelShuffle\Fmap_to_Next_CalculateR")
 
-    for i in range(len(fmapL)):
-        if(i == 0):
-            list_to_file(fmapL[i], L_dst_root / f"row_ZZZ.txt")
-            list_to_file(fmapR[i], R_dst_root / f"row_ZZZ.txt")
-        else:
-            list_to_file(fmapL[i], L_dst_root / f"row_{((i-1)):03d}.txt")
-            list_to_file(fmapR[i], R_dst_root / f"row_{((i-1)):03d}.txt")
+    if(show_detail):
+        for i in range(len(fmapL)):
+            if(i == 0):
+                list_to_file(fmapL[i], L_dst_root / f"row_ZZZ.txt")
+                list_to_file(fmapR[i], R_dst_root / f"row_ZZZ.txt")
+            else:
+                list_to_file(fmapL[i], L_dst_root / f"row_{((i-1)):03d}.txt")
+                list_to_file(fmapR[i], R_dst_root / f"row_{((i-1)):03d}.txt")
 
     
     return fmapL, fmapR

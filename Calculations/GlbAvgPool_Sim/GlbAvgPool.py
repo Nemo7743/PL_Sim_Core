@@ -1,5 +1,26 @@
 import statistics
 # ======== 小工具 ========
+# 拆分channel
+def Splitting_Tile(input_file_path, output_file_path):
+    with open(input_file_path, 'r', encoding='utf-8') as f:
+            # 讀取每一行，去除前後空白，並依據空格切割成 list
+            # 使用 if line.strip() 是為了避免讀取到空行
+            matrix = [line.strip().split() for line in f if line.strip()]
+    
+    '''
+    for i in range(len(matrix)):
+          print(matrix[i])
+    '''
+    out_matrix = []
+
+    for i in range(0, len(matrix[0]), 4):
+        for j in range(0, len(matrix), 1):
+            out_matrix.append(matrix[j][0+i : 4+i])
+    
+    with open(output_file_path, 'w', encoding='utf-8') as f:
+            for row in out_matrix:
+                f.write(" ".join(row) + "\n")
+
 # 轉置txt
 def transpose_txt(input_file, output_file):
     try:
@@ -223,7 +244,7 @@ def Calculation(stride = 1, show_detail = True, tile0 = [], tile1 = [], tile2 = 
         output.append("Poop")
         return output
 
-    for i in range(1024):
+    for i in range(160):
         output_inn = []
         avg_calc = []
         for j in range(0, 4, 1):
@@ -344,3 +365,19 @@ def GlbAvgPool(stride, show_detail):
 
 if __name__ == "__main__":
     GlbAvgPool(stride = -1, show_detail = True)
+
+    input_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer1.txt"
+    output_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer1_splitted.txt"
+    Splitting_Tile(input_file_path, output_file_path)
+
+    input_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer2.txt"
+    output_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer2_splitted.txt"
+    Splitting_Tile(input_file_path, output_file_path)
+
+    input_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer3.txt"
+    output_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer3_splitted.txt"
+    Splitting_Tile(input_file_path, output_file_path)
+
+    input_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer4.txt"
+    output_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\GlbAvgPool_Sim\data\tile_buffer4_splitted.txt"
+    Splitting_Tile(input_file_path, output_file_path)

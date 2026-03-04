@@ -1,0 +1,535 @@
+# ======== 小工具 ========
+# 轉置txt
+def transpose_txt(input_file, output_file, show_detail):
+    try:
+        # 1. 讀取檔案
+        with open(input_file, 'r', encoding='utf-8') as f:
+            # 讀取每一行，去除前後空白，並依據空格切割成 list
+            # 使用 if line.strip() 是為了避免讀取到空行
+            matrix = [line.strip().split() for line in f if line.strip()]
+
+        # 檢查是否有資料
+        if not matrix:
+            print("檔案是空的。")
+            return
+
+        # 2. 轉置資料
+        # zip(*matrix) 會將原本的 Row 拆開並重新組合成 Column
+        transposed_matrix = list(zip(*matrix))
+
+        # 3. 寫入新檔案
+        with open(output_file, 'w', encoding='utf-8') as f:
+            for row in transposed_matrix:
+                # 將 tuple 轉回字串，並用空格連接
+                f.write(" ".join(row) + "\n")
+        
+        if(show_detail): print(f"[系統]: {input_file} 轉置完成！已儲存至 {output_file}")
+
+    except FileNotFoundError:
+        print(f"找不到檔案：{input_file}")
+    except Exception as e:
+        print(f"發生錯誤：{e}")
+
+# 執行轉置
+#transpose_txt('tile_buffer3.txt', 'tile_buffer3.txt')
+
+
+'''
+# ======== Hex to Dec ======== (Q16.0)
+def HexToDec(hex_input):
+    dec_output = []
+    for i in range(len(hex_input)):
+        raw_val = int(hex_input[i], 16)
+        if raw_val & 0x8000:#判斷第 15 bit (MSB) 是否為 1
+            dec_output.append(raw_val - 0x10000)
+        else:
+            dec_output.append(raw_val)
+
+    return dec_output
+
+
+# ======== Dec to Hec ======== (Q16.0)
+def DecToHex(dec_input):
+    hex_output = []
+    for i in range(len(dec_input)):
+        hex_output.append(f"{dec_input[i] & 0xFFFF:04X}")
+
+    return hex_output
+'''
+
+
+# ======== Hex to Dec ======== (Q8.8)
+def HexToDec(hex_input):
+    scale_factor = 256.0
+    dec_output = []
+    for hex_str in hex_input:
+        # 轉成 Raw Integer (0 ~ 65535)
+        raw_val = int(hex_str, 16)
+
+        # 處理 Sign Bit (二補數轉換)
+        # 如果第 15 bit 是 1 (即 >= 0x8000)，代表是負數
+        if raw_val & 0x8000:
+            signed_val = raw_val - 0x10000
+        else:
+            signed_val = raw_val
+        
+        # 轉成浮點數
+        dec_output.append(signed_val / scale_factor)
+        
+    return dec_output
+
+# ======== Hex to Dec ======== (Q16.16)
+def HexToDec_Q16_16(hex_input):
+    # Q16.16 表示有 16 個小數位
+    # Scale Factor = 2^16 = 65536.0
+    scale_factor = 65536.0
+    
+    dec_output = []
+    for hex_str in hex_input:
+        # 轉成 Raw Integer (32-bit 範圍: 0 ~ 4294967295)
+        raw_val = int(hex_str, 16)
+
+        # 處理 Sign Bit (32-bit 二補數轉換)
+        # Q16.16 是 32-bit 格式，MSB 是第 31 bit (即 >= 0x80000000)
+        if raw_val & 0x80000000:
+            # 若為負數，減去 2^32 (0x100000000)
+            signed_val = raw_val - 0x100000000
+        else:
+            signed_val = raw_val
+        
+        # 轉成浮點數
+        dec_output.append(signed_val / scale_factor)
+        
+    return dec_output
+
+# ======== Dec to Hex (One Value) ======== (Q8.8)
+def DecToHex_One(val):
+    scale_factor = 256.0
+    MAX_VAL = 32767   # 0x7FFF
+    MIN_VAL = -32768  # 0x8000
+    int_val = int(round(val * scale_factor))
+    if int_val > MAX_VAL: int_val = MAX_VAL
+    elif int_val < MIN_VAL: int_val = MIN_VAL
+    return f"{int_val & 0xFFFF:04X}"
+
+# ======== Dec to Hex (List Version) ======== (Q8.8)
+def DecToHex(dec_input):
+    return [DecToHex_One(val) for val in dec_input]
+
+# ======== Dec to Hex (One Value) ======== (Q16.16)
+def DecToHex_Q16_16_One(val):
+    scale_factor = 65536.0
+    int_val = int(round(val * scale_factor))
+    return f"{int_val & 0xFFFFFFFF:08X}"
+
+
+
+# ======== 讀取檔案 -- 確認通道數用 ========
+def channel_check(tile0 = None, tile1 = None, tile2 = None, weight = None, show_detail = False):
+    
+    if(len(weight) != 4):
+        print(f"[錯誤]: Bias 數量應該要是 {4}，但偵測到 {len(weight)} 個 bias")
+        return "FUC it's wrong"
+    
+    channel_tile0_amount = len(tile0)
+    channel_tile1_amount = len(tile1)
+    channel_tile2_amount = len(tile2)
+
+    if(channel_tile0_amount != channel_tile1_amount or channel_tile1_amount != channel_tile2_amount or channel_tile2_amount != channel_tile0_amount):
+        print("[錯誤]: 三個輸入文本的通道數量不相同，到底為什麼可以犯這種錯 =.=")
+    else:
+        channel_amount = channel_tile0_amount
+        tile_w = len(tile0[0])
+        if(tile_w%2 == 0):# W 為偶數，沒問題
+            if(show_detail): print("[通過]: 通道檢查通過，無錯誤，夯")
+            return channel_amount, tile_w
+        else:
+            print("[錯誤]: W 不應該為奇數，你個SB")
+            return channel_amount, tile_w
+
+
+'''
+channel_amount = 0
+tile_w = 0
+print("[系統]: 執行輸入文本檢查")
+channel_amount, tile_w = channel_check()
+'''
+
+
+
+# ======== 讀取檔案 -- 運算用 ========
+# ==== tile ====
+def read_tile(tile_path, tile, channel_amount, tile_w):
+    with open(tile_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        tile_str = f.read().split()
+
+        # str 轉 int(16進制)
+        tile_int = []
+        tile_int = HexToDec(tile_str)
+        
+        # 將 tile 的 channel 切開並存為 2 維 list
+        for i in range(0, channel_amount, 1):
+            tile.append(tile_int[i*tile_w+0:i*tile_w+tile_w])
+'''        
+tile0 = []
+tile1 = []
+tile2 = []
+print("\n\n====================")
+print("[系統]: 讀取tile_buffer1.txt")
+read_tile("tile_buffer1.txt", tile0, channel_amount, tile_w)
+print("[系統]: 讀取tile_buffer2.txt")
+read_tile("tile_buffer2.txt", tile1, channel_amount, tile_w)
+print("[系統]: 讀取tile_buffer3.txt")
+read_tile("tile_buffer3.txt", tile2, channel_amount, tile_w)
+
+print("[系統]: 以下為各 tile_buffer，供檢查")
+# 印出 tile0 確認
+print("\ntile_buffer1:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile0[i]), f"tile1_{i}: ", tile0[i])
+# 印出 tile1 確認
+print("\ntile_buffer2:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile1[i]), f"tile2_{i}: ", tile1[i])
+# 印出 tile2 確認
+print("\ntile_buffer3:")
+for i in range(0, channel_amount, 1):
+    print("W =", len(tile2[i]), f"tile3_{i}: ", tile2[i])
+'''
+
+# ==== weight ====
+def read_weight(weight_path, weight):
+    with open(weight_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        weight_str_a = f.read().split()
+
+    # 將讀取到的權重做成一個 list
+    weight_str_b = []
+    for i in range(0, len(weight_str_a)+1, 1):
+        if(i == 0):
+            weight_str_b.append('0')
+        elif(i%4 == 0):
+            continue
+        else:
+            weight_str_b.append(weight_str_a[i-1])
+
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec(weight_str_b)
+    
+    # 將本次權重插入 list 形成二維陣列
+    weight.append(weight_int)
+'''
+weight = []
+print("\n\n====================")
+print("[系統]: 讀取weight_storage0.txt")
+read_weight("weight_storage0.txt", weight)
+print("[系統]: 讀取weight_storage1.txt")
+read_weight("weight_storage1.txt", weight)
+print("[系統]: 讀取weight_storage2.txt")
+read_weight("weight_storage2.txt", weight)
+print("[系統]: 讀取weight_storage3.txt")
+read_weight("weight_storage3.txt", weight)
+
+print("[系統]: 以下為各 weight_storage，供檢查\n")
+print(f"weight_storage0:\nbias: {weight[0][0]}, W0: {weight[0][1:]}\n")
+print(f"weight_storage1:\nbias: {weight[1][0]}, W0: {weight[1][1:]}\n")
+print(f"weight_storage2:\nbias: {weight[2][0]}, W0: {weight[2][1:]}\n")
+print(f"weight_storage3:\nbias: {weight[3][0]}, W0: {weight[3][1:]}")
+'''
+# ==== bias ====
+def read_bias(bias_path, weight):
+    with open(bias_path, "r", encoding = "utf-8") as f:
+        # 讀取 txt 成 list
+        bias_str_a = f.read().split()
+    
+    # str 轉 int(16進制)
+    weight_int = []
+    weight_int = HexToDec_Q16_16(bias_str_a)
+
+    # 將 bias 存入陣列的 [0]
+    for i in range(0, len(bias_str_a), 1):
+        weight[i][0] = weight_int[i]
+
+def assem_bias(bias_path):
+    bias_str = []
+
+    with open("data/bias_storage0.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("data/bias_storage1.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("data/bias_storage2.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+    with open("data/bias_storage3.txt", "r", encoding = "utf-8") as f:
+        bias_str.append(f.read())
+
+    with open(bias_path, "w", encoding = "utf-8") as f:
+        for i in range(0, len(bias_str), 1):
+            f.write(bias_str[i])
+            f.write("\n")
+
+
+
+# ======== 進行 Conv1 計算 ========
+def Calculation(stride = 2, show_detail = True, weight = None, tile0 = None, tile1 = None, tile2 = None, tile_w = 0):
+
+    if(stride < 1 or stride > 2 or weight == [] or tile0 == [] or tile1 == [] or tile2 == [] or tile_w == 0):
+        print("[錯誤]: 函式 Conv1_Calc 的參數輸入錯誤，這很有問題")
+        return ["錯爛"]
+    elif(stride == 1):
+        print("[錯誤]: Conv1 的 stride 是 2，不是 1")
+        return ["錯爛"]
+    
+    if(stride == 2):
+        '''
+        stride = 2 的padding 情況: 
+
+        0 x x x x x x x x x x x x x x 0(沒算到)
+        0 x x x x x x x x x x x x x x 0(沒算到)
+        0 x x x x x x x x x x x x x x 0(沒算到)
+
+        '''
+        if(show_detail):
+            print("[系統]: 以下為計算細節輸出，供檢查運算過程")
+        conv333 = 0
+        pre = 0
+        output = []
+        for i in range(len(weight)):
+            # 初始化暫存
+            output_inn = []
+
+            for j in range(0, tile_w, stride):
+                pre = 0
+                conv333 = weight[i][0]
+                if(show_detail):
+                    print("bias: ", DecToHex_Q16_16_One(conv333))
+                # ======== padding左 ========
+                if (j == 0):
+                    # --- Tile 0 (With Padding 0) ---
+                    pre = conv333
+                    conv333 = weight[i][1]*0 + weight[i][2]*0 + weight[i][3]*0 + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][1]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_One(weight[i][2]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_One(weight[i][3]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_Q16_16_One(pre)}(bias)")
+                    
+                    pre = conv333
+                    conv333 = weight[i][4]*tile0[0][0+j] + weight[i][5]*tile0[1][0+j] + weight[i][6]*tile0[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][4]):>15}(W{i}) * {DecToHex_One(tile0[0][0+j]):>15}(tile{0})+ {DecToHex_One(weight[i][5]):>15}(W{i}) * {DecToHex_One(tile0[1][0+j]):>15}(tile{0})+ {DecToHex_One(weight[i][6]):>15}(W{i}) * {DecToHex_One(tile0[2][0+j]):>15}(tile{0})+ {DecToHex_Q16_16_One(pre)}(acc)")
+                    
+                    pre = conv333
+                    conv333 = weight[i][7]*tile0[0][1+j] + weight[i][8]*tile0[1][1+j] + weight[i][9]*tile0[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][7]):>15}(W{i}) * {DecToHex_One(tile0[0][1+j]):>15}(tile{0})+ {DecToHex_One(weight[i][8]):>15}(W{i}) * {DecToHex_One(tile0[1][1+j]):>15}(tile{0})+ {DecToHex_One(weight[i][9]):>15}(W{i}) * {DecToHex_One(tile0[2][1+j]):>15}(tile{0})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    # --- Tile 1 (With Padding 0) ---
+                    pre = conv333
+                    conv333 = weight[i][10]*0 + weight[i][11]*0 + weight[i][12]*0 + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][10]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_One(weight[i][11]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_One(weight[i][12]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][13]*tile1[0][0+j] + weight[i][14]*tile1[1][0+j] + weight[i][15]*tile1[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][13]):>15}(W{i}) * {DecToHex_One(tile1[0][0+j]):>15}(tile{1})+ {DecToHex_One(weight[i][14]):>15}(W{i}) * {DecToHex_One(tile1[1][0+j]):>15}(tile{1})+ {DecToHex_One(weight[i][15]):>15}(W{i}) * {DecToHex_One(tile1[2][0+j]):>15}(tile{1})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][16]*tile1[0][1+j] + weight[i][17]*tile1[1][1+j] + weight[i][18]*tile1[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][16]):>15}(W{i}) * {DecToHex_One(tile1[0][1+j]):>15}(tile{1})+ {DecToHex_One(weight[i][17]):>15}(W{i}) * {DecToHex_One(tile1[1][1+j]):>15}(tile{1})+ {DecToHex_One(weight[i][18]):>15}(W{i}) * {DecToHex_One(tile1[2][1+j]):>15}(tile{1})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    # --- Tile 2 (With Padding 0) ---
+                    pre = conv333
+                    conv333 = weight[i][19]*0 + weight[i][20]*0 + weight[i][21]*0 + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][19]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_One(weight[i][20]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_One(weight[i][21]):>15}(W{i}) * {DecToHex_One(0):>15}( padd)+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][22]*tile2[0][0+j] + weight[i][23]*tile2[1][0+j] + weight[i][24]*tile2[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][22]):>15}(W{i}) * {DecToHex_One(tile2[0][0+j]):>15}(tile{2})+ {DecToHex_One(weight[i][23]):>15}(W{i}) * {DecToHex_One(tile2[1][0+j]):>15}(tile{2})+ {DecToHex_One(weight[i][24]):>15}(W{i}) * {DecToHex_One(tile2[2][0+j]):>15}(tile{2})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][25]*tile2[0][1+j] + weight[i][26]*tile2[1][1+j] + weight[i][27]*tile2[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][25]):>15}(W{i}) * {DecToHex_One(tile2[0][1+j]):>15}(tile{2})+ {DecToHex_One(weight[i][26]):>15}(W{i}) * {DecToHex_One(tile2[1][1+j]):>15}(tile{2})+ {DecToHex_One(weight[i][27]):>15}(W{i}) * {DecToHex_One(tile2[2][1+j]):>15}(tile{2})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                # ======== 無padding ======== 
+                else:
+                    # --- Tile 0 ---
+                    pre = conv333
+                    conv333 = weight[i][1]*tile0[0][-1+j] + weight[i][2]*tile0[1][-1+j] + weight[i][3]*tile0[2][-1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][1]):>15}(W{i}) * {DecToHex_One(tile0[0][-1+j]):>15}(tile{0})+ {DecToHex_One(weight[i][2]):>15}(W{i}) * {DecToHex_One(tile0[1][-1+j]):>15}(tile{0})+ {DecToHex_One(weight[i][3]):>15}(W{i}) * {DecToHex_One(tile0[2][-1+j]):>15}(tile{0})+ {DecToHex_Q16_16_One(pre)}(bias)")
+
+                    pre = conv333
+                    conv333 = weight[i][4]*tile0[0][0+j] + weight[i][5]*tile0[1][0+j] + weight[i][6]*tile0[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][4]):>15}(W{i}) * {DecToHex_One(tile0[0][0+j]):>15}(tile{0})+ {DecToHex_One(weight[i][5]):>15}(W{i}) * {DecToHex_One(tile0[1][0+j]):>15}(tile{0})+ {DecToHex_One(weight[i][6]):>15}(W{i}) * {DecToHex_One(tile0[2][0+j]):>15}(tile{0})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][7]*tile0[0][1+j] + weight[i][8]*tile0[1][1+j] + weight[i][9]*tile0[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][7]):>15}(W{i}) * {DecToHex_One(tile0[0][1+j]):>15}(tile{0})+ {DecToHex_One(weight[i][8]):>15}(W{i}) * {DecToHex_One(tile0[1][1+j]):>15}(tile{0})+ {DecToHex_One(weight[i][9]):>15}(W{i}) * {DecToHex_One(tile0[2][1+j]):>15}(tile{0})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    # --- Tile 1 ---
+                    pre = conv333
+                    conv333 = weight[i][10]*tile1[0][-1+j] + weight[i][11]*tile1[1][-1+j] + weight[i][12]*tile1[2][-1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][10]):>15}(W{i}) * {DecToHex_One(tile1[0][-1+j]):>15}(tile{1})+ {DecToHex_One(weight[i][11]):>15}(W{i}) * {DecToHex_One(tile1[1][-1+j]):>15}(tile{1})+ {DecToHex_One(weight[i][12]):>15}(W{i}) * {DecToHex_One(tile1[2][-1+j]):>15}(tile{1})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][13]*tile1[0][0+j] + weight[i][14]*tile1[1][0+j] + weight[i][15]*tile1[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][13]):>15}(W{i}) * {DecToHex_One(tile1[0][0+j]):>15}(tile{1})+ {DecToHex_One(weight[i][14]):>15}(W{i}) * {DecToHex_One(tile1[1][0+j]):>15}(tile{1})+ {DecToHex_One(weight[i][15]):>15}(W{i}) * {DecToHex_One(tile1[2][0+j]):>15}(tile{1})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][16]*tile1[0][1+j] + weight[i][17]*tile1[1][1+j] + weight[i][18]*tile1[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][16]):>15}(W{i}) * {DecToHex_One(tile1[0][1+j]):>15}(tile{1})+ {DecToHex_One(weight[i][17]):>15}(W{i}) * {DecToHex_One(tile1[1][1+j]):>15}(tile{1})+ {DecToHex_One(weight[i][18]):>15}(W{i}) * {DecToHex_One(tile1[2][1+j]):>15}(tile{1})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    # --- Tile 2 ---
+                    pre = conv333
+                    conv333 = weight[i][19]*tile2[0][-1+j] + weight[i][20]*tile2[1][-1+j] + weight[i][21]*tile2[2][-1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][19]):>15}(W{i}) * {DecToHex_One(tile2[0][-1+j]):>15}(tile{2})+ {DecToHex_One(weight[i][20]):>15}(W{i}) * {DecToHex_One(tile2[1][-1+j]):>15}(tile{2})+ {DecToHex_One(weight[i][21]):>15}(W{i}) * {DecToHex_One(tile2[2][-1+j]):>15}(tile{2})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][22]*tile2[0][0+j] + weight[i][23]*tile2[1][0+j] + weight[i][24]*tile2[2][0+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][22]):>15}(W{i}) * {DecToHex_One(tile2[0][0+j]):>15}(tile{2})+ {DecToHex_One(weight[i][23]):>15}(W{i}) * {DecToHex_One(tile2[1][0+j]):>15}(tile{2})+ {DecToHex_One(weight[i][24]):>15}(W{i}) * {DecToHex_One(tile2[2][0+j]):>15}(tile{2})+ {DecToHex_Q16_16_One(pre)}(acc)")
+
+                    pre = conv333
+                    conv333 = weight[i][25]*tile2[0][1+j] + weight[i][26]*tile2[1][1+j] + weight[i][27]*tile2[2][1+j] + conv333
+                    if(show_detail):
+                        print(f"{DecToHex_Q16_16_One(conv333):>20} = {DecToHex_One(weight[i][25]):>15}(W{i}) * {DecToHex_One(tile2[0][1+j]):>15}(tile{2})+ {DecToHex_One(weight[i][26]):>15}(W{i}) * {DecToHex_One(tile2[1][1+j]):>15}(tile{2})+ {DecToHex_One(weight[i][27]):>15}(W{i}) * {DecToHex_One(tile2[2][1+j]):>15}(tile{2})+ {DecToHex_Q16_16_One(pre)}(acc)")
+                output_inn.append(conv333)
+            output.append(output_inn)
+
+    else:
+        print("[錯誤]: 防呆都有寫你還可以進到這裡來，你本人就是 Bug 吧......")
+        return []
+
+    return output
+
+
+'''
+output = DW_Calc(2, True)
+print("\n[系統]: 以下為最終計算結果")
+hex_output = DecToHeX(output)
+print("output(int10) =", output)
+print("output(int16) =", hex_output)
+
+
+print("\n[系統]: 正在儲存計算結果至 output.txt")
+with open('output.txt', 'w', encoding='utf-8') as f:
+    for i in range(len(hex_output)):
+        f.write(str(hex_output[i]) + " ")
+
+print("\n[完成]: DW 運算完成")
+'''
+
+def Conv1(tile0, tile1, tile2, weight, stride, show_detail):
+    '''
+    Docstring for Conv1
+    
+    :param tile0: 二維陣列[ in_channel(0-2) ][ w(0-127) ]
+    :param tile1: 二維陣列[ in_channel(0-2) ][ w(0-127) ]
+    :param tile2: 二維陣列[ in_channel(0-2) ][ w(0-127) ]
+    :param weight: 二維陣列[ out_channel(0-3) ][ b(0) + w(1-27) ]
+    :param stride: 必須是2
+    :param show_detail: 要不要顯示運算過程
+    '''
+
+    '''
+    # ======== 轉置輸入 FMap 檔案 ======== (這個部分外部讀取檔案的程式碼已經先轉置過了，不用做)
+    if(show_detail):
+        print("====================")
+        print("[系統]: 轉置輸入 FMap 檔案")
+    transpose_txt("data/tile_buffer1.txt", "tile_buffer1_Tr.txt", show_detail)
+    transpose_txt("data/tile_buffer2.txt", "tile_buffer2_Tr.txt", show_detail)
+    transpose_txt("data/tile_buffer3.txt", "tile_buffer3_Tr.txt", show_detail)
+    # 讀取 bias 0 - 3 組合成新檔案
+    assem_bias("bias_storage.txt")
+    '''
+
+    # ======== 確認通道數 ========
+    channel_amount = 0
+    tile_w = 0
+    if(show_detail):
+        print("\n\n====================")
+        print("[系統]: 執行通道數檢查")
+    channel_amount, tile_w = channel_check(tile0, tile1, tile2, weight, show_detail)
+
+    # ======== 展示當前運算的 Fmap 和 Weight ========
+    # ==== tile ====
+    if(show_detail): print("\n\n====================")
+    '''
+    if(show_detail): print("[系統]: 讀取tile_buffer1_Tr.txt")
+    read_tile("tile_buffer1_Tr.txt", tile0, channel_amount, tile_w)
+    if(show_detail): print("[系統]: 讀取tile_buffer2_Tr.txt")
+    read_tile("tile_buffer2_Tr.txt", tile1, channel_amount, tile_w)
+    if(show_detail): print("[系統]: 讀取tile_buffer3_Tr.txt")
+    read_tile("tile_buffer3_Tr.txt", tile2, channel_amount, tile_w)
+    '''
+    if(show_detail):
+        print("[系統]: 以下為各 tile_buffer，供檢查")
+        # 印出 tile0 確認
+        print("\ntile_buffer1:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile0[i]), f"tile1_{i}: ", [DecToHex_One(x) for x in tile0[i]])
+        # 印出 tile1 確認
+        print("\ntile_buffer2:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile1[i]), f"tile2_{i}: ", [DecToHex_One(x) for x in tile1[i]])
+        # 印出 tile2 確認
+        print("\ntile_buffer3:")
+        for i in range(0, channel_amount, 1):
+            print("W =", len(tile2[i]), f"tile3_{i}: ", [DecToHex_One(x) for x in tile2[i]])
+    
+    # ==== weight ====
+    if(show_detail): print("\n\n====================")
+    '''
+    if(show_detail): print("[系統]: 讀取weight_storage0.txt")
+    read_weight("data/weight_storage0.txt", weight)
+    if(show_detail): print("[系統]: 讀取weight_storage1.txt")
+    read_weight("data/weight_storage1.txt", weight)
+    if(show_detail): print("[系統]: 讀取weight_storage2.txt")
+    read_weight("data/weight_storage2.txt", weight)
+    if(show_detail): print("[系統]: 讀取weight_storage3.txt")
+    read_weight("data/weight_storage3.txt", weight)
+    '''
+    # ==== bias ====
+    '''
+    if(show_detail): print("[系統]: 讀取bias_storage.txt")
+    read_bias("bias_storage.txt", weight)
+    '''
+    if(show_detail):
+        print("[系統]: 以下為各 weight_storage，供檢查\n")
+        print(f"weight_storage0:\nbias: {DecToHex_Q16_16_One(weight[0][0])}, W0: {[DecToHex_One(x) for x in weight[0][1:]]}\n")
+        print(f"weight_storage1:\nbias: {DecToHex_Q16_16_One(weight[1][0])}, W1: {[DecToHex_One(x) for x in weight[1][1:]]}\n")
+        print(f"weight_storage2:\nbias: {DecToHex_Q16_16_One(weight[2][0])}, W2: {[DecToHex_One(x) for x in weight[2][1:]]}\n")
+        print(f"weight_storage3:\nbias: {DecToHex_Q16_16_One(weight[3][0])}, W3: {[DecToHex_One(x) for x in weight[3][1:]]}")
+    
+    # ======== 進行 Conv1 計算 ========
+    if(show_detail): print("\n\n====================")
+    output = Calculation(stride, show_detail, weight, tile0, tile1, tile2, tile_w)
+    if(show_detail):
+        print("[系統]: 以下為最終計算結果")
+
+    if(show_detail):
+        # 進位轉換
+        hex_output = []
+        for i in range(0, len(output), 1):
+            hex_output.append(DecToHex(output[i]))
+
+    if(show_detail):
+        print("output(Float10) =", [[DecToHex_Q16_16_One(x) for x in row] for row in output])
+        print("output( Q8.8  ) =", hex_output)
+        print("\n")
+    
+    if(show_detail): print("[完成]: Conv1 運算完成")
+    return output
+
+if __name__ == "__main__":
+    Conv1(stride = 2, show_detail = True)

@@ -1,0 +1,9 @@
+best3修改：
+1. tile_buffer排法修改，新增原始txt檔方便確定還有沒有排錯
+2. GlobalAveragePooling修改成處裡160個channel
+
+best4修改：
+1. 將 tilebuffer 的排法改為：4個 channel為一個地址，歷遍方向為 W
+
+best5修改：
+1. 修正 output.dat 的換行邏輯。

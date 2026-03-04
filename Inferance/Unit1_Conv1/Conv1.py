@@ -4,6 +4,7 @@ import shutil
 import os
 import sys
 #sys.path.append(str(r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\Conv1_Sim"))
+#from . import Conv1_Sim
 import Conv1_Sim
 
 # ========== 小工具 ==========
@@ -413,8 +414,11 @@ def Conv1_implementation():
         for j in range(0, 24, 4):
             #print(j, j+1, j+2, j+3)
             # ========== 進行運算並把運算結果 concat ==========
-            output_Dec_neet_transpose = output_Dec_neet_transpose + Conv1_Sim.Conv1(fmap[i], fmap[i+1], fmap[i+2], weight[j+0 : j+4], 2, False)
-        
+            if i == 2 and j == 0:
+                output_Dec_neet_transpose = output_Dec_neet_transpose + Conv1_Sim.Conv1(fmap[i], fmap[i+1], fmap[i+2], weight[j+0 : j+4], 2, True)
+            else:
+                output_Dec_neet_transpose = output_Dec_neet_transpose + Conv1_Sim.Conv1(fmap[i], fmap[i+1], fmap[i+2], weight[j+0 : j+4], 2, False)
+
         # ========== ReLU ==========
         output_Dec_neet_transpose = ReLU(output_Dec_neet_transpose)
 

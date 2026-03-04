@@ -1,4 +1,26 @@
 # ======== 小工具 ========
+# 拆分channel
+def Splitting_Tile(input_file_path, output_file_path):
+    with open(input_file_path, 'r', encoding='utf-8') as f:
+            # 讀取每一行，去除前後空白，並依據空格切割成 list
+            # 使用 if line.strip() 是為了避免讀取到空行
+            matrix = [line.strip().split() for line in f if line.strip()]
+    
+    '''
+    for i in range(len(matrix)):
+          print(matrix[i])
+    '''
+    out_matrix = []
+
+    for i in range(0, len(matrix[0]), 4):
+        for j in range(0, len(matrix), 1):
+            out_matrix.append(matrix[j][0+i : 4+i])
+
+    
+    with open(output_file_path, 'w', encoding='utf-8') as f:
+            for row in out_matrix:
+                f.write(" ".join(row) + "\n")
+
 # 轉置txt
 def transpose_txt(input_file, output_file):
     try:
@@ -321,12 +343,14 @@ def Calculation(stride = 1, show_detail = True, weight = [], tile0 = [], tile_w 
                 conv_PW = weight[i][k+1] * tile0[k][j] + conv_PW
                 if(show_detail):
                     if(k==0):
-                        print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(bias)")
+                        print(f"({str(DecToHex([conv_PW])):<8}) {conv_PW:>20} = ({str(DecToHex([weight[i][k+1]])):<8}) {weight[i][k+1]:15}(W{i}) * ({str(DecToHex([tile0[k][j]])):<8}) {tile0[k][j]:>15}(T1_Out_Ch{i}) + ({str(DecToHex([conv_PW - (weight[i][k+1] * tile0[k][j])])):<8}) {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(bias)")
+                        # print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(bias)")
                     else:
-                        print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(prev)")
+                        print(f"({str(DecToHex([conv_PW])):<8}) {conv_PW:>20} = ({str(DecToHex([weight[i][k+1]])):<8}) {weight[i][k+1]:15}(W{i}) * ({str(DecToHex([tile0[k][j]])):<8}) {tile0[k][j]:>15}(T1_Out_Ch{i}) + ({str(DecToHex([conv_PW - (weight[i][k+1] * tile0[k][j])])):<8}) {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(prev)")
+                        # print(f"{conv_PW:>20} = {weight[i][k+1]:15}(W{i}) * {tile0[k][j]:>15}(T1_Out_Ch{i}) + {conv_PW - (weight[i][k+1] * tile0[k][j]):>15}(prev)")
             output_inn.append(conv_PW)
             if(show_detail):
-                print(conv_PW)
+                print("本次運算結果：", DecToHex([conv_PW]), "=", conv_PW)
         output.append(output_inn)
 
     return output
@@ -423,3 +447,7 @@ def ConvLast(stride, show_detail):
 
 if __name__ == "__main__":
     ConvLast(stride = 1, show_detail = True)
+
+    input_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\ConvLast_Sim\data\tile_buffer1.txt"
+    output_file_path = r"C:\Users\legoa\NCU\專題\專題內容\硬體模擬\PL_Sim_Core\Calculations\ConvLast_Sim\data\tile_buffer1_splitted.txt"
+    Splitting_Tile(input_file_path, output_file_path)

@@ -93,32 +93,45 @@ def clean_txt_to_coe_B(input_filename, output_filename=None):
 
 def clean_txt_to_dat(input_filename, output_filename=None):
     """
-    讀取 txt，只去除空白 (保留換行)，並輸出為 .dat 檔。
+    讀取 txt，去除空白換行，並將內容每 4 個數字 (16 chars) 換一行輸出為 .dat 檔。
     """
-    # 檢查輸入檔案是否存在
     if not os.path.exists(input_filename):
         print(f"錯誤：找不到檔案 '{input_filename}'")
         return
 
-    # 若未指定輸出路徑，預設為原路徑同名檔案
     if output_filename is None:
         base_name = os.path.splitext(input_filename)[0]
         output_filename = f"{base_name}.dat"
 
     try:
-        # 讀取原始 txt 檔案
         with open(input_filename, 'r', encoding='utf-8') as f:
             content = f.read()
 
-        # 【修正重點】只刪除空格，保留換行符號
-        cleaned_content = content.replace(" ", "")
+        # 1. 先把所有不必要的符號 (空白、換行) 全部清乾淨，變成一長串連續字串
+        #    例如: "19801981198219831984..."
+        cleaned_content = content.replace(" ", "").replace("\n", "").replace("\r", "").upper()
 
-        # 寫入至目標檔案 (使用 output_filename 以確保寫入正確的資料夾)
+        # 2. 設定切割長度
+        #    假設原本文字是 "1980" (4個字)，你要每 4 個數字換一行
+        #    所以每行長度 = 4 (字元) * 4 (個數字) = 16 字元
+        chars_per_line = 4 * 4  # = 16
+
+        dat_lines = []
+        
+        # 3. 使用迴圈每 16 個字元切一段
+        for i in range(0, len(cleaned_content), chars_per_line):
+            chunk = cleaned_content[i : i + chars_per_line]
+            dat_lines.append(chunk)
+
+        if not dat_lines:
+            print(f"[警告] 檔案 {input_filename} 內容為空。")
+            return
+
+        # 4. 寫入檔案，用 join 加上換行符號
         with open(output_filename, 'w', encoding='utf-8') as f:
-            f.write(cleaned_content)
+            f.write("\n".join(dat_lines))
 
-        # print(f"轉換成功！已輸出檔案：{output_filename}")
-        # print(f"原始長度：{len(content)} -> 處理後長度：{len(cleaned_content)}")
+        # print(f"[OK] 已輸出：{output_filename}")
 
     except Exception as e:
         print(f"處理 {input_filename} 時發生錯誤：{e}")

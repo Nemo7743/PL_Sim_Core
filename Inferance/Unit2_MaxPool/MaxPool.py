@@ -1,6 +1,6 @@
 from pathlib import Path
 import numpy as np
-import Max_Pool_Sim
+from . import Max_Pool_Sim
 
 # ========== 小工具 ==========
 # 轉置txt
